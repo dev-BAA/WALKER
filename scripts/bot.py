@@ -428,16 +428,21 @@ class TaskRunner(Thread):
 
         #driver.find_element_by_id('text').send_keys(self.task.search_query, Keys.ENTER)
         try:
+            i = 0
             """
-            while not "нашлось" in driver.title:
+            while "нашлось" not in driver.title:
+                if i > 0:
+                    driver.refresh()
+                    sleep(5)
                 letter_by_letter(f"{task_name}ПОИСКОВЫЙ ЗАПРОС:", "id", "text", self.task.search_query, driver, False)
                 driver.send_keys(Keys.ENTER)
                 sleep(5)
                 log_stalk(task_name + "нашлось Title: " + driver.title, enable_log_stalk)
                 sleep(2)
+                i += 1
             """
-            letter_by_letter(f"{task_name}ПОИСКОВЫЙ ЗАПРОС:", "id", "text", self.task.search_query, driver, False)
-            driver.send_keys(Keys.ENTER)
+            letter_by_letter(f"{task_name}ПОИСКОВЫЙ ЗАПРОС:", "id", "text", self.task.search_query, driver, True)
+            #driver.send_keys(Keys.ENTER)
             sleep(5)
         except Exception as e:
             print(e)
