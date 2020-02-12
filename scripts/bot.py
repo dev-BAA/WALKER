@@ -426,29 +426,40 @@ class TaskRunner(Thread):
         free_captcha(task_name, 'перед send keys - search_query', driver)
         driver.save_screenshot(SCREENSHOTS_DIR_today + task_name + "0_SEARCH_QUERY***.png")
 
-        #driver.find_element_by_id('text').send_keys(self.task.search_query, Keys.ENTER)
         try:
             i = 0
-            """
-            while "нашлось" not in driver.title:
+            while not "нашлось" in driver.title:
+                log_stalk(f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} title: {driver.title}", enable_log_stalk)
+                driver.save_screenshot(SCREENSHOTS_DIR_today + task_name + f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} title: {driver.title}.png")
                 if i > 0:
+                    log_stalk(f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE i>0 !!!!!!!!!!!!!!!!!!!!!!={i} Title: {driver.title}", enable_log_stalk)
+                    #send_email(email_dev, where, email_titel, f"{task_name}ПОИСКОВЫЙ ЗАПРОС: i > 0 Title: ВКЛАДКА = {driver.title} ")
                     driver.refresh()
-                    sleep(5)
+                    sleep(6)
                 letter_by_letter(f"{task_name}ПОИСКОВЫЙ ЗАПРОС:", "id", "text", self.task.search_query, driver, False)
-                driver.send_keys(Keys.ENTER)
+                sleep(1)
+                button = driver.find_element_by_xpath("//button[@type='submit']")
+                ## xpath=//button[contains(.,'Найти')]
+                button.click()
                 sleep(5)
-                log_stalk(task_name + "нашлось Title: " + driver.title, enable_log_stalk)
-                sleep(2)
+                log_stalk(f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} button.click() title: {driver.title}", enable_log_stalk)
+                driver.save_screenshot(SCREENSHOTS_DIR_today + task_name + f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} button.click() title: {driver.title}.png")
+                sleep(1)
+                if not "нашлось" in driver.title:
+                    letter_by_letter(f"{task_name}ПОИСКОВЫЙ ЗАПРОС:", "id", "text", self.task.search_query, driver, True)
+                    sleep(5)
+                    log_stalk(f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} ENTER title: {driver.title}", enable_log_stalk)
+                    driver.save_screenshot(SCREENSHOTS_DIR_today + task_name + f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} ENTER title: {driver.title}.png")
+                    sleep(1)
+                sleep(5)
+
+                if "нашлось" in driver.title:
+                    log_stalk(f"{task_name}ПОИСКОВЫЙ ЗАПРОС: НАШЛОСЬ Title: {driver.title}", enable_log_stalk)
                 i += 1
-            """
-            letter_by_letter(f"{task_name}ПОИСКОВЫЙ ЗАПРОС:", "id", "text", self.task.search_query, driver, True)
-            #driver.send_keys(Keys.ENTER)
-            sleep(5)
         except Exception as e:
             print(e)
-        sleep(8)
-        driver.save_screenshot(SCREENSHOTS_DIR_today + task_name + "1_SEARCH_QUERY.png")
 
+        save_screenshots(SCREENSHOTS_DIR_today, task_name, "1_SEARCH_QUERY", driver)
         log_stalk(task_name + "Title: " + driver.title, enable_log_stalk)
         log_stalk(task_name + "Город: " + tcity, enable_log_stalk)
         log_stalk(task_name + "Целевой сайт: " + ttarget_url, enable_log_stalk)
@@ -489,9 +500,19 @@ class TaskRunner(Thread):
             up = UsedProxy.objects.get(address=proxy_addr['proxy'])
             log_stalk(task_name + "template_div: " + str(up.template_div), enable_log_stalk)
 
+            z = 0
             for item in result_items:
+                save_screenshots(SCREENSHOTS_DIR_today, task_name, " item " + str(z), driver)
                 log_stalk(task_name + line_short, enable_log_stalk)
-                current_position = item.get_attribute('data-cid')
+                try:
+                    current_position = item.get_attribute('data-cid')
+                    z += 1
+                except Exception as e:
+                    log_stalk(task_name + " data-cid отсутствует, позиция Яндекс Директ или Маркет " + str(e) + "_", enable_log_stalk)
+                    name = task_name + "_" + str(z)
+                    save_screenshots(SCREENSHOTS_DIR_today, name, " data-cid отсутствует, позиция Яндекс Директ или Маркет, " + str(z), driver)
+                    z += 1
+                    continue
                 log_stalk(task_name + "Current_position: " + str(current_position), enable_log_stalk)
                 try:
                     hyperlink = item.find_element_by_tag_name('h2')
@@ -654,23 +675,23 @@ class TaskRunner(Thread):
         sleep(7)
         free_captcha(task_name, 'СМЕНА РЕГИОНА: после click geolink', driver)
         save_screenshots(SCREENSHOTS_DIR_today, task_name, "СМЕНА РЕГИОНА: ПОСЛЕ НАЖАТИЯ на GEOLINK", driver)
-        log_stalk(f"{task_name}СМЕНА РЕГИОНА: ПОСЛЕ НАЖАТИЯ на GEOLINK {driver.title}", enable_log_stalk)
+        log_stalk(f"{task_name}СМЕНА РЕГИОНА: ПОСЛЕ НАЖАТИЯ на GEOLINK: {driver.title}", enable_log_stalk)
         i = 0
         sleep(3)
         while "Местоположение" in driver.title:
-            log_stalk(f"{task_name}СМЕНА РЕГИОНА: i = {str(i)} - {driver.title}", enable_log_stalk)
+            log_stalk(f"{task_name}СМЕНА РЕГИОНА: {str(i)}: {driver.title}", enable_log_stalk)
             if i > 0:
                 driver.refresh()
-                log_stalk(f"{task_name}СМЕНА РЕГИОНА: DRIVER REFRESH, i = {str(i)} - {driver.title}", enable_log_stalk)
+                log_stalk(f"{task_name}СМЕНА РЕГИОНА: DRIVER REFRESH, {str(i)}: {driver.title}", enable_log_stalk)
             if i >= 2:
-                send_email(email_dev, "Местоположение залипло", email_titel, f"i > 2")
+                send_email(email_dev, "Местоположение залипло", email_titel, f"{task_name} Местоположение залипло i = {str(i)}")
             sleep(7)
             driver.find_element_by_id('city__front-input').click()
-            save_screenshots(SCREENSHOTS_DIR_today, task_name, "СМЕНА РЕГИОНА: ПОСЛЕ CLICK ПО ПОЛЮ city__front-input", driver)
-            log_stalk(f"{task_name}СМЕНА РЕГИОНА: ПОСЛЕ CLICK ПО ПОЛЮ city__front-input, Title = {driver.title}", enable_log_stalk)
+            save_screenshots(SCREENSHOTS_DIR_today, task_name, f"СМЕНА РЕГИОНА: {str(i)}: ПОСЛЕ CLICK ПО ПОЛЮ city__front-input", driver)
+            log_stalk(f"{task_name}СМЕНА РЕГИОНА: {str(i)}: ПОСЛЕ CLICK ПО ПОЛЮ city__front-input, Title = {driver.title}", enable_log_stalk)
             try:
                 #letter_by_letter(task_name, "id", "city__front-input", city, driver, False)
-                letter_by_letter(f"{task_name}СМЕНА РЕГИОНА:", "id", "city__front-input", city, driver, False)
+                letter_by_letter(f"{task_name}СМЕНА РЕГИОНА: {str(i)}:", "id", "city__front-input", city, driver, False)
                 geo_input = driver.find_element_by_class_name('input__popup_type_geo')
                 free_captcha(task_name, 'change region: TRY change region, перед input__popup_type_geo', driver)
                 localities = geo_input.find_elements_by_tag_name('li')
@@ -680,19 +701,19 @@ class TaskRunner(Thread):
                     if item['title'] == city:
                         locality.click()
                         sleep(7)
-                        log_stalk(f"{task_name}СМЕНА РЕГИОНА: TRY, Title = {driver.title}", enable_log_stalk)
-                        save_screenshots(SCREENSHOTS_DIR_today, task_name, "СМЕНА РЕГИОНА: TRY", driver)
-                        thread_data.change_region = "TRY"
+                        log_stalk(f"{task_name}СМЕНА РЕГИОНА: {str(i)}: ВЫБОР города ИЗ ВЫПАДАЮЩЕГО МЕНЮ, Title = {driver.title}", enable_log_stalk)
+                        save_screenshots(SCREENSHOTS_DIR_today, task_name, f"СМЕНА РЕГИОНА: {str(i)}: ВЫБОР города ИЗ ВЫПАДАЮЩЕГО МЕНЮ", driver)
+                        thread_data.change_region = "CLICK"
                         return
                 city_input.send_keys(Keys.ENTER)
                 sleep(7)
             except Exception as e:
-                letter_by_letter(f"{task_name}СМЕНА РЕГИОНА:", "class", "input__control", city, driver, False)
+                letter_by_letter(f"{task_name}СМЕНА РЕГИОНА: {str(i)}:", "class", "input__control", city, driver, False)
                 driver.find_element_by_class_name('input__control').send_keys(Keys.ENTER)
                 sleep(7)
-                log_stalk(f"{task_name}СМЕНА РЕГИОНА: EXCEPT, Title = {driver.title}", enable_log_stalk)
-                save_screenshots(SCREENSHOTS_DIR_today, task_name, "СМЕНА РЕГИОНА: EXCEPT", driver)
-                thread_data.change_region = "EXCEPT"
+                log_stalk(f"{task_name}СМЕНА РЕГИОНА: {str(i)}: ВЫБОР города ЧЕРЕЗ ПРОЖАТИЕ Enter, Title = {driver.title}", enable_log_stalk)
+                save_screenshots(SCREENSHOTS_DIR_today, task_name, f"СМЕНА РЕГИОНА: {str(i)}: ВЫБОР города ЧЕРЕЗ ПРОЖАТИЕ Enter", driver)
+                thread_data.change_region = "ENTER"
             i += 1
             sleep(3)
 
@@ -721,29 +742,14 @@ class TaskRunner(Thread):
                 send_email(email_dev, where, email_titel, f" ВКЛАДОК > 1 ")
                 for handle in driver.window_handles:
                     driver.switch_to_window(handle)
-                    log_stalk(task_name + " - ВКЛАДКА = " + driver.title, enable_log_stalk)
+                    log_stalk(f"{task_name}{where} - ВКЛАДКА = {driver.title}", enable_log_stalk)
                     #if not "Местоположение" in driver.title:
                     #    send_email(email_dev, where, email_titel, f" window_handles > 1 {driver.title} ")
                     send_email(email_dev, where, email_titel, f" ВКЛАДКА = {driver.title} ")
                     if "Местоположение" in driver.title:
-                        log_stalk(task_name + " - RETURN, ВКЛАДКА = " + driver.title, enable_log_stalk)
+                        log_stalk(f"{task_name}{where} - RETURN, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         return
             sleep(5)
-            """
-            try:
-                java_script = "document.getElementsByClassName('" + by_identifier + "')[0].click();"
-                driver.execute_script(java_script)
-                log_stalk(task_name + " - TRY JAVA_SCRIPT click " + by_identifier + " --" + str(i), enable_log_stalk)
-                log_stalk(task_name + "Количество открытых вкладок " + str(len(driver.window_handles)), enable_log_stalk)
-                save_screenshots(SCREENSHOTS_DIR_today, task_name, "TRY JAVA_SCRIPT CLICK " + str(i), driver)
-                if need_title in driver.title:
-                    log_stalk(f"{task_name}{where} RETURN JAVA_SCRIPT: текущая страница {i} - {driver.title}", enable_log_stalk)
-                    return
-            except Exception as detail:
-                log_stalk(task_name + " - EXCEPT JAVA_SCRIPT click " + by_identifier + " --" + str(i) + str(detail), enable_log_stalk)
-                save_screenshots(SCREENSHOTS_DIR_today, task_name, "EXCEPT JAVA_SCRIPT CLICK " + str(i), driver)
-                sleep(10)
-            """
             i += 1
             driver.refresh()
             sleep(8)
@@ -760,10 +766,12 @@ def get_driver(config: Dict) -> Chrome:
         options.add_argument(f'--proxy-server={config["proxy"]}')
     return Chrome("./webdriver/chromedriver", options=options, desired_capabilities=capabilities)
 
+"""
 def convert(l:list):
     s = [str(i) for i in l]
     res = "".join(s)
     return res
+"""
 
 def thread_enum(where: str):
     log_run(where + line_short, enable_log_stalk)
@@ -772,7 +780,6 @@ def thread_enum(where: str):
         log_run(where + " ПОТОК: " + thread.name, enable_log_run)
     log_run(where + line_short, enable_log_stalk)
 
-#def thread_start(task: task, task_id: int, hour: int, minutes: int, run_text: str):
 def thread_start(threads: dict, task: GroupTask, task_id: int, hour: int, minutes: int, run_text: str):
     thread_id = f"Task{task_id}.{hour}:{minutes}.{random_string(3)}"
     log_run(run_text + "Задача " + str(task_id) + ": СТАРТ имя потока " + thread_id, enable_log_run)
@@ -781,22 +788,23 @@ def thread_start(threads: dict, task: GroupTask, task_id: int, hour: int, minute
     threads[thread_id].start()
 
 def run():
-    timenow = uptime_obj()
-    # СБРАСЫВАНИЕ КЭШЕЙ РАБОТЫ БОТА ПОСЛЕ ПЕРЕЗАГРУЗКИ
-    if timenow.days == 0 and timenow.hours == 0 and timenow.minutes <= 10:
-        log_run("RUN - СБРАСЫВАНИЕ КЭШЕЙ РАБОТЫ БОТА ПОСЛЕ ПЕРЕЗАГРУЗКИ: uptime менее 5 минут", enable_log_run)
+    tmnw = uptime_obj()
+    reboot_reset_text = "СБРАСЫВАНИЕ КЭШЕЙ РАБОТЫ БОТА ПОСЛЕ ПЕРЕЗАГРУЗКИ"
+    if tmnw.days == 0 and tmnw.hours == 0 and tmnw.minutes <= 10:
+        log_run(reboot_reset_text + ": uptime менее 5 минут", enable_log_run)
         ci = CommonInfo.objects.get(id=1)
         if not ci.reboot_reset:
-            log_run("RUN - СБРАСЫВАНИЕ КЭШЕЙ РАБОТЫ БОТА ПОСЛЕ ПЕРЕЗАГРУЗКИ: reboot_reset = False", enable_log_run)
+            log_run(reboot_reset_text + ": reboot_reset = False", enable_log_run)
             tasks_reset_reboot()
             ci.reboot_reset = True
             ci.reboot_reset_time = timezone.now()
             ci.save()
-    # НОЧНОЕ СБРАСЫВАНИЕ КЭШЕЙ РАБОТЫ БОТА
+
+    night_reset_text = "НОЧНОЕ СБРАСЫВАНИЕ КЭШЕЙ РАБОТЫ БОТА"
     if datetime.now().hour == 4:
         ci = CommonInfo.objects.get(id=1)
         if not ci.today_reset:
-            log_run("RUN - НОЧНОЕ СБРАСЫВАНИЕ КЭШЕЙ РАБОТЫ БОТА", enable_log_run)
+            log_run(night_reset_text, enable_log_run)
             tasks_reset_night()
             tasks_reset_not_done()
             # удаляем вчерашнее расписание
@@ -810,14 +818,13 @@ def run():
         if ci.today_reset:
             ci_reset_status(False)
 
-    # ГЕНЕРАЦИЯ РАСПИСАНИЯ ДЛЯ ЗАДАЧ БОТА
+    gen_text = "ГЕНЕРАЦИЯ РАСПИСАНИЯ ДЛЯ ЗАДАЧ"
     if datetime.now().hour == 6:
-        log_run("RUN - ГЕНЕРАЦИЯ РАСПИСАНИЯ ДЛЯ ЗАДАЧ БОТА", enable_log_run)
+        log_run(gen_text, enable_log_run)
         if Scheduler.objects.all().count() == 0:
             for task in GroupTask.objects.filter(status=True):
                 scheduler_generate(task.launches_per_day, task.id, hour_start, hour_end)
 
-    # ЗАПУСК ЗАДАЧ БОТА В ПОТОК
     run_text = "ЗАПУСК ЗАДАЧ В ПОТОК "
     threads = {}
     while hour_start <= datetime.now().hour < hour_end:
@@ -836,12 +843,6 @@ def run():
                     if datetime.now().hour == hour:
                         log_run(run_text + "Задача " + str(task.id) + ": час = " + str(hour), enable_log_run)
                         if datetime.now().minute == minutes:
-                            ##log_run(run_text + "Задача " + str(task.id) + ": минуты = " + str(minutes), enable_log_run)
-                            #thread_id = f"Task{task.id}.{hour}:{minutes}.{random_string(3)}"
-                            #log_run(run_text + "Задача " + str(task.id) + ": СТАРТ имя потока " + thread_id, enable_log_run)
-                            #threads[thread_id] = TaskRunner(task=task)
-                            #threads[thread_id].name = thread_id
-                            #threads[thread_id].start()
                             thread_start(threads, task, task.id, hour, minutes, run_text)
                             if task.launches_per_day > (task.running_today + 1) and shed_len != 1:
                                 element_next = shed[task.running_today + 1]
@@ -850,11 +851,6 @@ def run():
                                 log_run(run_text + "Задача " + str(task.id) + ": NEXT = " + str(hour_next) + ":" + str(minutes_next), enable_log_run)
                                 if element[0] == element_next[0] and element[1] == element_next[1]:
                                     thread_start(threads, task, task.id, hour, minutes, run_text)
-                                    #thread_id = f"Task{task.id}.{hour}:{minutes}.{random_string(3)}"
-                                    #log_run(run_text + "Задача " + str(task.id) + ": СТАРТ имя потока " + thread_id, enable_log_run)
-                                    #threads[thread_id] = TaskRunner(task=task)
-                                    #threads[thread_id].name = thread_id
-                                    #threads[thread_id].start()
                 else:
                     log_run(run_text + "Задача " + str(task.id) + ": ВСЕ ЗАПЛАНИРОВАННЫЕ НА ДЕНЬ ЗАПУСКИ ЗАДАЧИ ВЫПОЛНЕНЫ", enable_log_run)
             log_run(run_text + "<" + line_double, enable_log_stalk)
@@ -862,7 +858,7 @@ def run():
         except KeyboardInterrupt:
             for task_id, task_runner in threads.items():
                 task = GroupTask.objects.get(pk=task_id)
-                log_run("task.running_today( KeyboardInterrupt) = " + str(task.running_today), enable_log_run)
+                log_run(run_text + "(KeyboardInterrupt) = " + str(task.running_today), enable_log_run)
                 task.running_today += 1
                 task.save()
     sleep(60)
