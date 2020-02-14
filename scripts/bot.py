@@ -614,14 +614,19 @@ class TaskRunner(Thread):
                         log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ", enable_log_stalk)
                         log(user=self.task.owner, task=self.task, action='VISIT', extra={'visit_to_CONCURENT_url': url}, uid=self.uid)
                         link.click()
+                        log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel1 = " + driver.title, enable_log_stalk)
                         driver.switch_to.window(driver.window_handles[-1])
+                        log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel2 = " + driver.title, enable_log_stalk)
                         #  заходим к конкурентам
                         for i in range(5):
                             #sleep(randint(3, 5))
                             sleep(randint(4, 6))
                             driver.execute_script(f"window.scrollTo(0, {randint(300, 800)});")
+                            log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel3 = " + driver.title, enable_log_stalk)
                         driver.close()
+                        #log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel4 = " + driver.title, enable_log_stalk)
                         driver.switch_to.window(driver.window_handles[0])
+                        log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel5 = " + driver.title, enable_log_stalk)
                         number_competitor_visit -= 1
                         log_stalk(task_name + "Осталось зайти к конкурентам: " + str(number_competitor_visit), enable_log_stalk)
             if (exitFlag):
