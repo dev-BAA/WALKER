@@ -376,25 +376,23 @@ class TaskRunner(Thread):
         driver.get(YANDEX_URL)
         sleep(6)
         log_stalk(task_name + "TITLE: " + driver.title, enable_log_stalk)
-
         if tcity != '':
             self.change_region(driver, task_name, tcity)
-
         free_captcha(task_name, 'перед send keys - search_query', driver)
-        driver.save_screenshot(SCREENSHOTS_DIR_today + task_name + "0_SEARCH_QUERY***.png")
 
         try:
             i = 0
             while not "нашлось" in driver.title:
-                log_stalk(f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} title: {driver.title}", enable_log_stalk)
+                log_stalk(f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} title: {driver.title}, handles: {len(driver.window_handles)}", enable_log_stalk)
                 driver.save_screenshot(SCREENSHOTS_DIR_today + task_name + f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} title: {driver.title}.png")
                 if i > 0:
                     log_stalk(f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE i>0 !!!!!!!!!!!!!!!!!!!!!!={i} Title: {driver.title}", enable_log_stalk)
-                    #send_email(email_dev, where, email_titel, f"{task_name}ПОИСКОВЫЙ ЗАПРОС: i > 0 Title: ВКЛАДКА = {driver.title} ")
+                    if i > 3:
+                        send_email(email_dev, where, email_titel, f"{task_name}ПОИСКОВЫЙ ЗАПРОС: i > 3 Title: ВКЛАДКА = {driver.title}, handles: {len(driver.window_handles)}")
                     driver.refresh()
                     sleep(6)
                 letter_by_letter(f"{task_name}ПОИСКОВЫЙ ЗАПРОС:", "id", "text", self.task.search_query, driver, False)
-                sleep(1)
+                sleep(2)
                 button = driver.find_element_by_xpath("//button[@type='submit']")
                 ## xpath=//button[contains(.,'Найти')]
                 button.click()
@@ -416,7 +414,6 @@ class TaskRunner(Thread):
         except Exception as e:
             print(e)
 
-        save_screenshots(SCREENSHOTS_DIR_today, task_name, "1_SEARCH_QUERY", driver)
         log_stalk(task_name + "Title: " + driver.title, enable_log_stalk)
         log_stalk(task_name + "Город: " + tcity, enable_log_stalk)
         log_stalk(task_name + "Целевой сайт: " + ttarget_url, enable_log_stalk)
@@ -428,39 +425,21 @@ class TaskRunner(Thread):
 
         for current_page in range(stngs.stalker_page_range):
             sleep(5)
-            #result_items = driver.find_elements_by_class_name('serp-item')
             free_captcha(task_name, 'перед li serp-item', driver)
             result_items = driver.find_elements_by_xpath("//li[@class='serp-item']")
-            sleep(5)
-
             if len(result_items) == 0:
-                #send_email(email_dev, "result_items", email_titel, f" result_items LI = 0 ")
-                name = task_name + "_" + str(current_page)
-                save_screenshots(SCREENSHOTS_DIR_today, name, " CURRENT PAGE", driver)
-
-                #log_stalk(task_name + "!!! ШАБЛОН DIV !!!", enable_log_stalk)
-                #result_items = driver.find_elements_by_xpath("//div[@class='serp-item']")
-                #LAST
-                #result_items = driver.find_elements_by_xpath("//div[contains(@class, 'serp-item')]")
-                #20.05.2019
-                #result_items = driver.find_elements_by_xpath("//div[@class='serp-list']/div[contains(@class, 'serp-item')]")
-                free_captcha(task_name, 'перед div serp-item', driver)
+                thread_data.div = True
                 result_items = driver.find_elements_by_xpath( "//div[@class='serp-list']/div[@class='serp-item']")
-                #result_items = driver.find_elements_by_class_name('serp-item')
                 usedproxy_updt_div(proxy_addr['proxy'], True)
-
-                log_stalk(task_name + " - " + str(len(result_items)) + " - " + " Количество serp-item в DIV CLASS ", enable_log_stalk)
-
             log_stalk(task_name + str(current_page) + " " + line_double, enable_log_stalk)
-            log_stalk(task_name + "serp-item КОЛИЧЕСТВО: " + str(len(result_items)), enable_log_stalk)
-            #log_stalk(task_name + "template_div: " + str(self.task.template_div), enable_log_stalk)
-            up = UsedProxy.objects.get(address=proxy_addr['proxy'])
-            log_stalk(task_name + "template_div: " + str(up.template_div), enable_log_stalk)
+            log_stalk(task_name + "КОЛИЧЕСТВО serp-item: " + str(len(result_items)), enable_log_stalk)
+            #up = UsedProxy.objects.get(address=proxy_addr['proxy'])
+            #log_stalk(task_name + "template_div: " + str(up.template_div), enable_log_stalk)
 
             z = 0
             for item in result_items:
-                save_screenshots(SCREENSHOTS_DIR_today, task_name, " item " + str(z), driver)
                 log_stalk(task_name + line_short, enable_log_stalk)
+                save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f" item {z}")
                 try:
                     current_position = item.get_attribute('data-cid')
                     z += 1
@@ -479,22 +458,13 @@ class TaskRunner(Thread):
                     save_screenshots(SCREENSHOTS_DIR_today, name, " не получилось взять ГИПЕРЛИНК  ЛИНКС", driver)
                     continue
                 try:
-                    #if self.task.template_div:
-                    if up.template_div:
-                        #item_text = item.text
-                        #item__attribute_href = item.get_attribute('href')
-                        #log_stalk(task_name + "item_text: " + str(item_text), enable_log_stalk)
-                        #log_stalk(task_name + "item__attribute_href: " + str(item__attribute_href), enable_log_stalk)
-
-
+                    if thread_data.div:
                         log_stalk(task_name + "шаблон: DIV ", enable_log_stalk)
                         links = item.find_elements_by_class_name('serp-url__link')
-
                         name = task_name + "_" + str(current_page) + " шаблон DIV"
                         #log_stalk(task_name + "name: " + str(name), enable_log_stalk)
                         save_screenshots(SCREENSHOTS_DIR_today, name, " шаблон DIV", driver)
                         log_stalk(task_name + "колво link в links: " + str(len(links)), enable_log_stalk)
-
                     else:
                         log_stalk(task_name + "шаблон: LI ", enable_log_stalk)
                         links = item.find_elements_by_class_name('link_theme_outer')
@@ -513,7 +483,6 @@ class TaskRunner(Thread):
                     name = task_name + "_" + str(current_page)
                     name = name + "8888888888"
                     save_screenshots(SCREENSHOTS_DIR_today, name, " не получилось взять  ЛИНКС<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", driver)
-
                     #link = links[0]
                     url = "http://XXXXXXXXXXXXXXX"
 
@@ -566,31 +535,37 @@ class TaskRunner(Thread):
                     break
 
                 elif (current_page == 0 and tcompetitor_sites_len == 0) or is_competitor_site(url, tcompetitor_sites):
-                    log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ - elif", enable_log_stalk)
                     if ((random.choice([True, False]) == True) and number_competitor_visit >= 1) :
                         log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ", enable_log_stalk)
+                        log_stalk(task_name + "pager - Количество открытых вкладок " + str(len(driver.window_handles)), enable_log_stalk)
                         log(user=self.task.owner, task=self.task, action='VISIT', extra={'visit_to_CONCURENT_url': url}, uid=self.uid)
                         link.click()
                         log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel1 = " + driver.title, enable_log_stalk)
+                        log_stalk(task_name + "pager - Количество открытых вкладок 1 " + str(len(driver.window_handles)), enable_log_stalk)
                         driver.switch_to.window(driver.window_handles[-1])
                         log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel2 = " + driver.title, enable_log_stalk)
-                        #  заходим к конкурентам
+                        log_stalk(task_name + "pager - Количество открытых вкладок 2 " + str(len(driver.window_handles)), enable_log_stalk)
                         for i in range(5):
-                            #sleep(randint(3, 5))
-                            sleep(randint(4, 6))
+                            sleep(randint(3, 5))
                             driver.execute_script(f"window.scrollTo(0, {randint(300, 800)});")
                             log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel3 = " + driver.title, enable_log_stalk)
+                            log_stalk(task_name + "pager - Количество открытых вкладок 3 " + str(len(driver.window_handles)), enable_log_stalk)
                         driver.close()
-                        #log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel4 = " + driver.title, enable_log_stalk)
                         driver.switch_to.window(driver.window_handles[0])
-                        log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel5 = " + driver.title, enable_log_stalk)
+                        for handle in driver.window_handles:
+                            driver.switch_to_window(handle)
+                            log_stalk(f"{task_name}###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ - ВКЛАДКА = {driver.title}", enable_log_stalk)
+                            if "нашлось" in driver.title:
+                                log_stalk(f"{task_name}###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ - RETURN, ВКЛАДКА = {driver.title}", enable_log_stalk)
+                                return
+                        log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel4 = " + driver.title, enable_log_stalk)
+                        log_stalk(task_name + "pager - Количество открытых вкладок 4 " + str(len(driver.window_handles)), enable_log_stalk)
                         number_competitor_visit -= 1
                         log_stalk(task_name + "Осталось зайти к конкурентам: " + str(number_competitor_visit), enable_log_stalk)
             if (exitFlag):
                 break
             sleep(10)
-            msg = "pager - Количество открытых вкладок " + str(len(driver.window_handles))
-            log_stalk(task_name + msg, enable_log_stalk)
+            log_stalk(task_name + "pager - Количество открытых вкладок " + str(len(driver.window_handles)), enable_log_stalk)
             driver.save_screenshot(SCREENSHOTS_DIR_today + task_name + "6_pager.png")
             pager = driver.find_element_by_class_name('pager')
             next_page = pager.find_elements_by_tag_name('a')[-1]
@@ -600,8 +575,8 @@ class TaskRunner(Thread):
             current_page_number = ""
             log(user=self.task.owner, task=self.task, action='NEXT_PAGE', extra={'current_page': current_page_number}, uid=self.uid)
         if not_done_flag:
-            log_stalk(task_name + "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++НА ЦЕЛЕВОЙ САЙТ ЗАХОДА НЕ БЫЛО!!!!!", enable_log_stalk)
-            log_stalk(task_name + "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++not_done!!!!! - " + str(self.task.not_done), enable_log_stalk)
+            log_stalk(task_name + "+++НА ЦЕЛЕВОЙ САЙТ ЗАХОДА НЕ БЫЛО!!!!!", enable_log_stalk)
+            log_stalk(task_name + "+++not_done!!!!! - " + str(self.task.not_done), enable_log_stalk)
             GroupTask.objects.filter(id=self.task.id).update(not_done=F('not_done') + 1)
             not_done_flag = False
 
@@ -695,11 +670,11 @@ class TaskRunner(Thread):
                 log_stalk(f"{task_name}{where} RETURN: текущая страница {i} - {driver.title}", enable_log_stalk)
                 return
             if len(driver.window_handles) > 1:
-                send_email(email_dev, where, email_titel, f"Задача {task_name}, ВКЛАДОК > 1 ")
+                #send_email(email_dev, where, email_titel, f"Задача {task_name}, ВКЛАДОК > 1 ")
                 for handle in driver.window_handles:
                     driver.switch_to_window(handle)
                     log_stalk(f"{task_name}{where} - ВКЛАДКА = {driver.title}", enable_log_stalk)
-                    send_email(email_dev, where, email_titel, f"Задача {task_name}, ВКЛАДКА = {driver.title} ")
+                    #send_email(email_dev, where, email_titel, f"Задача {task_name}, ВКЛАДКА = {driver.title} ")
                     if "Местоположение" in driver.title:
                         log_stalk(f"{task_name}{where} - RETURN, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         return

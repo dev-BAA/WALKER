@@ -76,7 +76,7 @@ def save_screenlog(driver: Chrome, path: str, name: str, where: str):
     with open(path + _string + ".html", 'w') as f:
         f.write(driver.page_source)
     driver.save_screenshot(path + _string + ".png")
-    log_stalk(_string + " (с сохранением png и html)", enable_log)
+    log_stalk(_string + " (png, html)", enable_log)
 
 def create_dir(path: str):
     if not os.path.exists(path):
