@@ -1,0 +1,38 @@
+{% extends 'walker_panel/base.html' %}
+
+{% block content %}
+
+    <div class="row">
+        <table class="table table-sm table-striped">
+              <thead>
+                <tr class="table-secondary">
+                  <th scope="col">ДАТА</th>
+                  <th scope="col">ЗАДАЧ ЗАВЕРШЕНО</th>
+                  <th scope="col">ЗАДАЧ CRASHED</th>
+                  <th scope="col">РЕШЕНО ЗАДАЧ С КАПЧЕЙ (из множества ЗАДАЧ ЗАВЕРШЕНО)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for history in historys reversed %}
+                <tr>
+                  <th scope="row"> {{ history.create_time|date}} </th>
+                  <td> {{ history.task_finished }} </td>
+                  <td> {{ history.task_crashed }} </td>
+                  <td> {{ history.task_capched }} </td>
+                </tr>
+                {% endfor %}
+
+              </tbody>
+        </table>
+
+    </div>
+    <script>
+    $(".log-row").on('mouseover',   function(e){
+        var uid = $(this).data('log-uid');
+
+        $(`.log-row`).removeClass('highlight-row');
+        $(`.log-row[data-log-uid=${uid}]`).addClass('highlight-row');
+
+    })
+    </script>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'walker_panel/base.html' %}
+
+
+{% block header %}{% endblock %}
+{% block info %}
+    <div class="container-info">
+        <div class="container-info-table">
+            <div class="row container-info-table-row">
+              <div class="p-3 mb-2 bg-success text-white">Задач завершено: <b> {{ commoninfo.task_finished }} </b></div>
+              <div class="p-3 mb-2 bg-warning text-dark">Задач с капчей решено: <b> {{ commoninfo.task_capched }} </b></div>
+              <div class="p-3 mb-2 bg-danger text-white">Задач упало: <b> {{ commoninfo.task_crashed }} </b></div>
+              <div class="p-3 mb-2 bg-dark text-white">Последняя задача: <b> {{ commoninfo.last_task_ended }} </b></div>
+            </div>
+            {% if commoninfo.zero_balance %}
+            <div>
+              <div class="p-3 mb-2 bg-danger text-white"><b> На счете РУКАПЧА нет денег </b></div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="row pt-0 mt-0" style="height: 100vh;">
+        <div class="col-12">
+            <div class="list-group">
+                <span class="glyphicon glyphicon-plus"></span>
+                <span class="oi oi-plus"></span>
+                {% for group in groups %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div style="width: 40%;">
+                            <span><a href="/group/{{ group.id }}/" class="btn btn-primary">{{ group.group_name }}</a></span><br>
+                        </div>
+                        <div style="width: 30%;">
+                            <span><b>URL:</b> <a href="http://{{ group.target_url }}" target="_blank">{{ group.target_url }}</a></span><br>
+                            <span><b>Город:</b> {{ group.city }} </span><br>
+                        </div>
+                        <div style="width: 20%;">
+                            <span><b>Кол-во задач:</b> {{ group.count_tasks }} </span><br>
+                            {# <span><b>Запущенно задач:</b> {{ group.count_tasks_running }} </span><br> #}
+                        </div>
+                        <span class="badge badge-light badge-pill"><a
+                                href="/remove-group/group/{{ group.id }}/">удалить</a></span>
+                    </li>
+                {% endfor %}
+
+                <a href="/group/" class="list-group-item list-group-item-action">
+                    <span class="task-label">+ Добавить группу</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var user_id = {{request.user.id}};
+    </script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'walker_panel/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12">
+            <b>ПРОКСИ АКТИВНЫЕ</b>
+            <form method="post">
+                {% csrf_token %}
+                {{ proxy_form|crispy }}
+                <input type="submit" value="Добавить" class="btn btn-primary btn-block">
+            </form>
+
+            <div class="list-group proxy-list mt-5 mb-5">
+                <span class="glyphicon glyphicon-plus"></span>
+                <span class="oi oi-plus"></span>
+
+                {% for proxy in proxies %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            <b>Host:</b>{{ proxy.host }}:{{ proxy.port }}
+                        </span>
+
+                        <span class="proxy-credentials">
+                            {% if proxy.username %}
+                                <b>User:</b> {{ proxy.username }}
+                                <b>Password:</b><span class="hidden-password"> {{ proxy.password }}</span>
+                            {% endif %}
+                        </span>
+                        <span class="badge {{ proxy.enabled|yesno:'badge-success,badge-danger' }} badge-pill"> {{ proxy.enabled|yesno:'Доступно,Недоступно' }}</span>
+                        <span class="proxy-control-buttons">
+                            <span class="badge {{ proxy.status|yesno:'badge-light,badge-secondary' }} badge-pill"><a
+                                    href="/change-proxy-status1/{{ proxy.id }}/">{{ proxy.status|yesno:'Выключить,Включить' }}</a>
+                            </span>
+                            <span class="badge badge-light badge-pill"><a
+                                    href="/remove-proxy1/{{ proxy.id }}/">удалить</a>
+                            </span>
+                        </span>
+                    </li>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}

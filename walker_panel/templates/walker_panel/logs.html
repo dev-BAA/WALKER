@@ -1,0 +1,26 @@
+{% extends 'walker_panel/base.html' %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12">
+            <code>
+                {% for log in logs %}
+                    <span class="log-row" data-log-uid="{{ log.uid }}">
+                    {{ log.datetime }} <a href="/task/{{ log.task.id }}/">Task {{ log.task.id }}</a> {{ log.create_time }} {{ log.action }} {{ log.extra|default:'' }} <br>
+                    </span>
+                {% endfor %}
+            </code>
+        </div>
+
+    </div>
+    <script>
+    $(".log-row").on('mouseover',   function(e){
+        var uid = $(this).data('log-uid');
+
+        $(`.log-row`).removeClass('highlight-row');
+        $(`.log-row[data-log-uid=${uid}]`).addClass('highlight-row');
+
+    })
+    </script>
+{% endblock %}

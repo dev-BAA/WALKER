@@ -190,47 +190,6 @@ def check_result_response(res: str, task_name: str, captcha_id: str) -> str:
         res_input = res[3:]
     return res_input
 
-"""
-def walk_on_site(driver: Chrome, task_name: str):
-    for i in range(randint(5, 15)):
-        try:
-            links = driver.find_elements_by_tag_name('a')
-            if check_dev():
-                aaa = "ССЫЛКИ: "
-                for li in links:
-                    aa = li.get_attribute('href')
-                    aaa = aaa + ", " + aa
-                log_stalk(task_name + "WALK: TITLE Яндекс: " + aaa, enable_log_stalk)
-            action = ActionChains(driver)
-            link = choice(links)
-            save_screenshots(SCREENSHOTS_DIR, "-walk_on_site-", " link = choice", driver)
-            action.move_to_element(link)
-            action.perform()
-            save_screenshots(SCREENSHOTS_DIR, "-walk_on_site-", " action perform", driver)
-            do_delay('fast')
-            link.click()
-            sleep(1)
-            save_screenshots(SCREENSHOTS_DIR, "-walk_on_site-", " link click", driver)
-
-            driver.find_element_by_tag_name('body').send_keys(Keys.ESCAPE)
-            save_screenshots(SCREENSHOTS_DIR, "-walk_on_site-", " Keys ESCAPE", driver)
-            do_delay('fast')
-
-            for y in range(randint(5, 40)):
-                try:
-                    random_div = choice(driver.find_elements_by_tag_name('div'))
-                    action.move_to_element(random_div)
-                    save_screenshots(SCREENSHOTS_DIR, "-walk_on_site-", " move_to_element random_div", driver)
-                    action.perform()
-                    do_delay('fast')
-                    driver.execute_script(f"window.scrollTo(0, {randint(1, 500)});")
-                except:
-                    pass
-            sleep(1)
-        except Exception as e:
-            print(e)
-"""
-
 def walk_on_site(driver: Chrome, task_name: str):
     for i in range(randint(5, 15)):
         try:
@@ -242,9 +201,7 @@ def walk_on_site(driver: Chrome, task_name: str):
             do_delay('fast')
             link.click()
             sleep(1)
-            #driver.save_screenshot(SCREENSHOTS_DIR + "--------------------------------------555-1.png")
             driver.find_element_by_tag_name('body').send_keys(Keys.ESCAPE)
-            #driver.save_screenshot(SCREENSHOTS_DIR + "--------------------------------------555-2.png")
             do_delay('fast')
 
             for y in range(randint(5, 40)):
@@ -658,7 +615,7 @@ class TaskRunner(Thread):
                 return config
             if i > 0:
                 log_proxy( f"{task_name}КОНФИГУРАЦИЯ БРАУЗЕРА - {i} итерация ВЫБРАННЫЙ ПРОКСИ ИСПОЛЬЗУЕТСЯ: {proxy.host}:{proxy.port}", enable_log_proxy)
-            proxy = random.choice(ModelProxy.objects.filter(owner=self.task.owner))
+            proxy = random.choice(ModelProxy.objects.filter(owner=self.task.owner).filter(status=True))
             thread_data.proxy = f"{proxy.host}:{proxy.port}"
             log_proxy(f"{task_name}КОНФИГУРАЦИЯ БРАУЗЕРА - {i} итерация ВЫБРАН ПРОКСИ: {thread_data.proxy}", enable_log_proxy)
             i += 1
@@ -676,11 +633,10 @@ class TaskRunner(Thread):
         thread_data.change_region = "-"
         free_captcha(task_name, 'СМЕНА РЕГИОНА: перед GEOLINK click', driver)
         sleep(3)
-        self.click(task_name, "СМЕНА РЕГИОНА: ПОСЛЕ НАЖАТИЯ на GEOLINK", "class", "geolink", "Местоположение", driver)
+        self.click(task_name, "СМЕНА РЕГИОНА CLICK: ПОСЛЕ НАЖАТИЯ на GEOLINK", "class", "geolink", "Местоположение", driver)
         sleep(7)
         free_captcha(task_name, 'СМЕНА РЕГИОНА: после click geolink', driver)
-        save_screenshots(SCREENSHOTS_DIR_today, task_name, "СМЕНА РЕГИОНА: ПОСЛЕ НАЖАТИЯ на GEOLINK", driver)
-        log_stalk(f"{task_name}СМЕНА РЕГИОНА: ПОСЛЕ НАЖАТИЯ на GEOLINK: {driver.title}", enable_log_stalk)
+        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"СМЕНА РЕГИОНА: ПОСЛЕ НАЖАТИЯ на GEOLINK")
         i = 0
         sleep(3)
         while "Местоположение" in driver.title:
@@ -692,8 +648,7 @@ class TaskRunner(Thread):
                 send_email(email_dev, "Местоположение залипло", email_titel, f"{task_name} Местоположение залипло i = {str(i)}")
             sleep(7)
             driver.find_element_by_id('city__front-input').click()
-            save_screenshots(SCREENSHOTS_DIR_today, task_name, f"СМЕНА РЕГИОНА: {str(i)}: ПОСЛЕ CLICK ПО ПОЛЮ city__front-input", driver)
-            log_stalk(f"{task_name}СМЕНА РЕГИОНА: {str(i)}: ПОСЛЕ CLICK ПО ПОЛЮ city__front-input, Title = {driver.title}", enable_log_stalk)
+            save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"СМЕНА РЕГИОНА: {str(i)}: ПОСЛЕ CLICK ПО ПОЛЮ city__front-input")
             try:
                 #letter_by_letter(task_name, "id", "city__front-input", city, driver, False)
                 letter_by_letter(f"{task_name}СМЕНА РЕГИОНА: {str(i)}:", "id", "city__front-input", city, driver, False)
@@ -706,8 +661,7 @@ class TaskRunner(Thread):
                     if item['title'] == city:
                         locality.click()
                         sleep(7)
-                        log_stalk(f"{task_name}СМЕНА РЕГИОНА: {str(i)}: ВЫБОР города ИЗ ВЫПАДАЮЩЕГО МЕНЮ, Title = {driver.title}", enable_log_stalk)
-                        save_screenshots(SCREENSHOTS_DIR_today, task_name, f"СМЕНА РЕГИОНА: {str(i)}: ВЫБОР города ИЗ ВЫПАДАЮЩЕГО МЕНЮ", driver)
+                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"СМЕНА РЕГИОНА: {str(i)}: ВЫБОР города ИЗ ВЫПАДАЮЩЕГО МЕНЮ, Title = {driver.title}")
                         thread_data.change_region = "CLICK"
                         return
                 city_input.send_keys(Keys.ENTER)
@@ -716,8 +670,7 @@ class TaskRunner(Thread):
                 letter_by_letter(f"{task_name}СМЕНА РЕГИОНА: {str(i)}:", "class", "input__control", city, driver, False)
                 driver.find_element_by_class_name('input__control').send_keys(Keys.ENTER)
                 sleep(7)
-                log_stalk(f"{task_name}СМЕНА РЕГИОНА: {str(i)}: ВЫБОР города ЧЕРЕЗ ПРОЖАТИЕ Enter, Title = {driver.title}", enable_log_stalk)
-                save_screenshots(SCREENSHOTS_DIR_today, task_name, f"СМЕНА РЕГИОНА: {str(i)}: ВЫБОР города ЧЕРЕЗ ПРОЖАТИЕ Enter", driver)
+                save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"СМЕНА РЕГИОНА: {str(i)}: ВЫБОР города ЧЕРЕЗ ПРОЖАТИЕ Enter, Title = {driver.title}")
                 thread_data.change_region = "ENTER"
             i += 1
             sleep(3)
@@ -727,8 +680,7 @@ class TaskRunner(Thread):
         log_stalk(f"{task_name}{where} текущая страница {i} - {driver.title}", enable_log_stalk)
         while not need_title in driver.title:
             sleep(2)
-            save_screenshots(SCREENSHOTS_DIR_today, task_name, "CLICK " + by_identifier, driver)
-            log_stalk(f"{task_name}{where} Количество открытых вкладок до клика = {len(driver.window_handles)}", enable_log_stalk)
+            save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"{where} Количество открытых вкладок до клика = {len(driver.window_handles)}")
             sleep(3)
             if by_type == "xpath":
                 element = driver.find_element_by_xpath(by_identifier)
@@ -738,19 +690,16 @@ class TaskRunner(Thread):
                 element = driver.find_element_by_class_name(by_identifier)
             element.click()
             sleep(10)
-            log_stalk(f"{task_name}{where} Количество открытых вкладок после клика = {len(driver.window_handles)}", enable_log_stalk)
-            save_screenshots(SCREENSHOTS_DIR_today, task_name, where + " Количество открытых вкладок после клика", driver)
+            save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"{where} Количество открытых вкладок после клика = {len(driver.window_handles)}")
             if need_title in driver.title:
                 log_stalk(f"{task_name}{where} RETURN: текущая страница {i} - {driver.title}", enable_log_stalk)
                 return
             if len(driver.window_handles) > 1:
-                send_email(email_dev, where, email_titel, f" ВКЛАДОК > 1 ")
+                send_email(email_dev, where, email_titel, f"Задача {task_name}, ВКЛАДОК > 1 ")
                 for handle in driver.window_handles:
                     driver.switch_to_window(handle)
                     log_stalk(f"{task_name}{where} - ВКЛАДКА = {driver.title}", enable_log_stalk)
-                    #if not "Местоположение" in driver.title:
-                    #    send_email(email_dev, where, email_titel, f" window_handles > 1 {driver.title} ")
-                    send_email(email_dev, where, email_titel, f" ВКЛАДКА = {driver.title} ")
+                    send_email(email_dev, where, email_titel, f"Задача {task_name}, ВКЛАДКА = {driver.title} ")
                     if "Местоположение" in driver.title:
                         log_stalk(f"{task_name}{where} - RETURN, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         return

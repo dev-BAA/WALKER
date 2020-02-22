@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Site Walker Panel</title>
+
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+            crossorigin="anonymous"></script>
+
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/jquery.kladr.min.css' %}" rel="stylesheet">
+    <script src="{% static 'js/jquery.kladr.min.js' %}"></script>
+
+</head>
+<body>
+<div class="header-menu">
+    <div class="menu-items">
+        {% if request.user.is_authenticated %}
+            <div class="menu-item"><a href="/">Главная</a></div>
+            <div class="menu-item"><a href="/logs/" class="menu-item-title">Логи</a></div>
+            <div class="menu-item"><a href="/results/" class="menu-item-title">Позиции задач</a></div>
+            <div class="menu-item"><a href="/historys/" class="menu-item-title">История бота</a></div>
+            <div class="menu-item"><a href="/proxy/" class="menu-item-title">Прокси</a></div>
+            <div class="menu-item"><a href="/proxy1/" class="menu-item-title">Прокси активные</a></div>
+            <div class="menu-item"><a href="/settings/" class="menu-item-title">Настройки</a></div>
+            {#<div class="menu-item"><a href="/groups/" class="menu-item-title">Группы</a></div>#}
+            {% if not is_walker_enable %}
+                <div class="menu-item"><h3 style="color: red;">Walker is disabled</h3></div>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="user-menu">
+         <span class="user-name">
+                {% if request.user.is_authenticated %}
+                    {{ request.user.username }} (<a href="/sign-out/">выход</a>)
+                {% endif %}
+        </span>
+    </div>
+</div>
+<div class="container-fluid">
+    {% block info %}{% endblock %}
+    <div class="row mt-0 pt-5 mb-5">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            {% block content %}{% endblock %}
+        </div>
+        <div class="col-xl-0 col-lg-0 col-md-0 col-sm-0 col-0"></div>
+    </div>
+</div>
+<script src="{% static 'js/script.js' %}"></script>
+<script>
+    $(function () {
+        $('[name="city"]').kladr({
+            type: $.kladr.type.city
+        });
+    });
+</script>
+</body>
+</html>

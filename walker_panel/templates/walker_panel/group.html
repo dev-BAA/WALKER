@@ -1,0 +1,74 @@
+{% extends 'walker_panel/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                  {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field.errors }}
+                    {{ hidden_field }}
+                  {% endfor %}
+
+                  <table border="0"  class="table table-sm">
+                    {% for field in form.visible_fields %}
+                      <tr>
+                        <th  class="thead-dark">{{ field.label_tag }}</th>
+                        <td>
+                          {{ field.errors }}
+                          {{ field }}
+                          {{ field.help_text }}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </table>
+                <input type="submit" value="Сохранить" class="btn btn-primary btn-block ">
+            </form>
+
+            <div class="list-group mt-4 mb-4">
+                <span class="glyphicon glyphicon-plus"></span>
+                <span class="oi oi-plus"></span>
+
+                {% for gtask in group_tasks %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <a href="/group/{{ group.id }}/gtask/{{ gtask.id }}/" class="btn btn-primary">Задача {{ gtask.id }}</a>
+                        <div style="width: 30%;">
+                            <span><b>Запрос:</b> {{ gtask.search_query }}</span><br>
+                        </div>
+                        <div style="width: 13%;">
+                            <span><b>Запусков:</b> {{ gtask.running_today }}/{{ gtask.launches_per_day }}</span>
+                        </div>
+                        <div style="width: 23%;">
+                            <span><b>Невыполнено:</b> <b class="text-danger">{{ gtask.not_done }}</b></span><br>
+                        </div>
+                        <div style="width: 7%;">
+                            <a href="/change-gtask-status/group/{{ group.id }}/gtask/{{ gtask.id }}/"
+                               title="{{ gtask.status|yesno:'Выключить, Включить' }}">
+                                <span class="badge {{ gtask.status|yesno:'badge-success,badge-danger' }} badge-pill">·</span>
+                            </a>
+                            <span class="badge badge-light badge-pill"><a
+                                    href="/remove-gtask/group/{{ group.id }}/gtask/{{ gtask.id }}/">удалить</a></span>
+                        </div>
+                    </li>
+
+                {% endfor %}
+                <a href="/group/{{ group.id }}/gtask/" class="list-group-item list-group-item-action">
+                    <span class="task-label">+ Добавить задачу</span>
+                </a>
+            </div>
+
+
+
+
+        </div>
+
+    </div>
+
+
+{% endblock %}
+
+

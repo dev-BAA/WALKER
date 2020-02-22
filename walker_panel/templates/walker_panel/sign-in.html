@@ -1,0 +1,21 @@
+{% extends 'walker_panel/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Sign in{% endblock %}
+
+{% block content %}
+    <div class="row mt-5 pt-5">
+        <div class="col-4"></div>
+        <div class="col-4" style="height:100vh">
+            <form method="POST" action="/sign-in/" class="login-form mt-5">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="form-row">
+                    <input type="submit" value="Войти" class="btn btn-primary btn-block">
+                </div>
+            </form>
+            <b class="text-danger"> {{ text }} </b>
+        </div>
+        <div class="col-4"></div>
+    </div>
+
+{% endblock %}

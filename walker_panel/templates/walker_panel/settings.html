@@ -1,0 +1,44 @@
+{% extends 'walker_panel/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12">
+            <form method="post" class="form-group">
+                  {% csrf_token %}
+
+                  {{ form.non_field_errors }}
+
+                  {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field.errors }}
+                    {{ hidden_field }}
+                  {% endfor %}
+
+                  <table border="0"  class="table table-sm">
+                    {% for field in form.visible_fields %}
+                      <tr>
+                        <th  class="thead-dark">{{ field.label_tag }}</th>
+                        <td>
+                          {{ field.errors }}
+                          {{ field }}
+                          {{ field.help_text }}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </table>
+                <input type="submit" value="Сохранить" class="btn btn-primary btn-block " size="40">
+            </form>
+
+            <div class="list-group proxy-list mt-5 mb-5">
+                <span class="glyphicon glyphicon-plus"></span>
+                <span class="oi oi-plus"></span>
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
