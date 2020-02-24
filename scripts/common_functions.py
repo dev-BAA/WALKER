@@ -200,6 +200,33 @@ def check_proxy(proxyip: str) -> bool:
     return False
 """
 
+"""
+def convert(l:list):
+    s = [str(i) for i in l]
+    res = "".join(s)
+    return res
+"""
+
+def proc_uptime():
+    try:
+        f = open("/proc/uptime")
+        contents = f.read().split()
+        f.close()
+    except:
+        return "Cannot open uptime file: /proc/uptime"
+    total_seconds = float(contents[0])
+    return total_seconds
+
+def uptime_obj():
+    return Uptime()
+
+class Uptime:
+    def __init__(self):
+        self.days = int(proc_uptime() / DAY)
+        self.hours = int((proc_uptime() % DAY) / HOUR)
+        self.minutes = int((proc_uptime() % HOUR) / MINUTE)
+        self.seconds = int(proc_uptime() % MINUTE)
+
 def get_current_time(task_name):
     logger.info(task_name + " Текущее время " + str(datetime.now().hour) + ":" + str(datetime.now().minute) + ":" + str(datetime.now().second) + ":" + str(datetime.now().microsecond))
 
