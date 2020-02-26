@@ -5,8 +5,12 @@
 ## Установка
 
 - ОС сервера **Ubuntu 18.04**
-- В ОС установлены следующие пакеты:
-  - **python**
+- В ОС установить:
+  sudo apt update
+  sudo apt upgrade
+  sudo apt install net-tools mc openssh-server curl
+  sudo apt install python3.7 python3-venv python3.7-venv
+  sudo apt install python3.7-dev
 
 
 ## Настройки
