@@ -53,6 +53,7 @@ year = datetime.today().strftime("%Y")
 month = datetime.today().strftime("%m")
 day = datetime.today().strftime("%d")
 SCREENSHOTS_DIR_today = SCREENSHOTS_DIR + year + "." + month + "." + day + "/"
+SCREENSHOTS_DIR_older_week = SCREENSHOTS_DIR + year + "." + month + "." + str(int(day)-5) + "/"
 
 stngs = Setting.objects.get(id=2)
 hour_start = stngs.workers_time_start
@@ -481,15 +482,15 @@ class TaskRunner(Thread):
                     #if "Местоположение" in driver.title:
                     #    log_stalk(f"{task_name}{where} - RETURN, ВКЛАДКА = {driver.title}", enable_log_stalk)
                     #    return
-                self.change_handle("Местоположение")
+                self.change_handle(driver, task_name, "Местоположение")
                 log_stalk(f" - !!!!!!!!!!!!!!!!!!! - RETURN2, ВКЛАДКА = {driver.title}", enable_log_stalk)
             sleep(5)
             i += 1
             driver.refresh()
             sleep(8)
 
-    #def change_handle(self, driver: Chrome, needed_title: str):
-    def change_handle(self, needed_title: str):
+    def change_handle(self, driver: Chrome, task_name: str, needed_title: str):
+    #def change_handle(self, needed_title: str):
         for handle in driver.window_handles:
             driver.switch_to_window(handle)
             if needed_title in driver.title:
@@ -550,6 +551,7 @@ def run():
             ci_reset_status(True)
     if datetime.now().hour == 5:
         create_dir(SCREENSHOTS_DIR_today)
+        delete_dir(SCREENSHOTS_DIR_older_week)
         ci = CommonInfo.objects.get(id=1)
         if ci.today_reset:
             ci_reset_status(False)

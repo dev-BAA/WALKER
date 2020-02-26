@@ -1,5 +1,6 @@
 import logging
 import os, platform
+import shutil
 import subprocess
 import asyncio
 import string, random
@@ -81,6 +82,10 @@ def save_screenlog(driver: Chrome, path: str, name: str, where: str):
 def create_dir(path: str):
     if not os.path.exists(path):
         os.makedirs(path)
+
+def delete_dir(path: str):
+    if os.path.exists(path):
+        shutil.rmtree(path, ignore_errors=True)
 
 def random_string(stringLength: int):
     letters = string.ascii_lowercase
