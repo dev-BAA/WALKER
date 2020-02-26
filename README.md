@@ -48,25 +48,26 @@
 - скачать драйвер и установить права  
   Скачать с сайта https://sites.google.com/a/chromium.org/chromedriver/downloads , версия драйвера должна соответсвовать версии установленного Google Chrome.  
   chmod u+x chromedriver  
-- установка python бота как сервиса  
+- установка python bot скрипта как сервис  
   systemctl enable walker.service  
   systemctl daemon-reload  
   sudo service walker start  
   service walker status  
-  walker.service:  
-  [Unit]  
-  Description=walker  
-  
-  [Service]  
-  Type=idle  
-  ExecStart=/root/site_walker/myvenv/bin/python3.7 /root/site_walker/manage.py runscript bot  
-  WorkingDirectory=/root/site_walker/  
-  Restart=always  
-  
-  
-  [Install]  
-  Alias=walker  
-  WantedBy=default.target  
-
+  содержимое **/etc/systemd/system/walker.service**:  
+```diff
+#  [Unit]  
+#  Description=walker  
+#  
+#  [Service]  
+#  Type=idle  
+#  ExecStart=/root/site_walker/myvenv/bin/python3.7 /root/site_walker/manage.py runscript bot  
+#  WorkingDirectory=/root/site_walker/  
+#  Restart=always  
+#  
+#  
+#  [Install]  
+#  Alias=walker  
+#  WantedBy=default.target  
+```
 ## Настройки
 
