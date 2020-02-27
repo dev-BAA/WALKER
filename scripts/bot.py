@@ -66,14 +66,16 @@ enable_log_stalk = stngs.enable_log_stalk
 enable_log_proxy = stngs.enable_log_proxy
 
 thread_data = threading.local()
+thread_data.div = False
+thread_data.pid = ""
 
 if check_dev():
     email_titel = 'Site Walker DEV'
 else:
     email_titel = 'Site Walker'
 
-def log(user: User, task: GroupTask, action: str, level: str = 'info', extra: dict = None, uid: UUID = None):
-    log_entry = GroupLog(owner=user, task=task, action=action, extra=json.dumps(extra), level=level, uid=uid)
+def log(user: User, task: GroupTask, action: str, level: str = 'info', extra: dict = None, uid: UUID = None, pid: str = None):
+    log_entry = GroupLog(owner=user, task=task, action=action, extra=json.dumps(extra), level=level, uid=uid, pid=pid)
     log_entry.save()
     logger.info("Task " + str(task.id) + ": " + action)
 
@@ -179,19 +181,20 @@ class TaskRunner(Thread):
         GroupTask.objects.filter(id=self.task.id).update(last_start=timezone.now())
         self.task.refresh_from_db()
         try:
-            log(user=self.task.owner, task=self.task, action='TASK_ACTIVATED', uid=self.uid)
             browser_configuration = self.generate_browser_configuration(pl, task_name, self.task.id)
             driver = get_driver(browser_configuration)
-            pid = driver.service.process.pid
+            thread_data.pid = str(driver.service.process.pid)
+            #pid = driver.service.process.pid
             self.task.refresh_from_db()
-            usedproxy_add_addr(str(self.task.id), thread_data.proxy, str(pid), threading.currentThread().getName())
-            self.stalk_sites_in_yandex(driver, browser_configuration, str(pid))
+            log(user=self.task.owner, task=self.task, action=f'TASK_ACTIVATED, pid={thread_data.pid}', uid=self.uid, pid=thread_data.pid)
+            usedproxy_add_addr(str(self.task.id), thread_data.proxy, thread_data.pid, threading.currentThread().getName())
+            self.stalk_sites_in_yandex(driver, browser_configuration, thread_data.pid)
             ci_task_finished()
         except Exception as e:
             logger.exception(task_name + 'Stalking did catch exception ')
             up = UsedProxy.objects.get(address=browser_configuration['proxy'])
             error_save(task_name, thread_data.proxy, tcity, up.template_div, browser_configuration['user-agent'], thread_data.change_region, e)
-            log(user=self.task.owner, task=self.task, action='CRASHED', uid=self.uid, extra={'message': f'Прокси {thread_data.proxy} '})
+            log(user=self.task.owner, task=self.task, action=f'CRASHED, pid={thread_data.pid}', uid=self.uid, extra={'message': f'Прокси {thread_data.proxy} '}, pid=thread_data.pid)
             usedproxy_remove_addr(thread_data.proxy)
             ci_task_crashed()
             if not check_dev():
@@ -199,14 +202,14 @@ class TaskRunner(Thread):
             send_email(email_dev, "Task CRASHED", email_titel, f"{task_name} \n Task CRASHED \n {thread_data.proxy} \n {tcity} \n {e} ")
         finally:
             log_stalk(task_name + " ***** THREAD value: " + str(thread_data.proxy), enable_log_stalk)
-            log(user=self.task.owner, task=self.task, action='FINISH', uid=self.uid, extra={'message': f'Task finish {thread_data.proxy} '})
+            log(user=self.task.owner, task=self.task, action=f'FINISH, pid={thread_data.pid}', uid=self.uid, extra={'message': f'Task finish {thread_data.proxy} '}, pid=thread_data.pid)
             usedproxy_remove_addr(thread_data.proxy)
             driver.quit()
             ci_reboot_reset()
             ci_task_finish()
 
     def stalk_sites_in_yandex(self, driver: Chrome, proxy_addr: dict, pid: str):
-        thread_data.div = False
+        #thread_data.div = False
         task_name = f"Task {str(self.task.id)}({pid}): "
         target_grp = Group.objects.get(group_name=self.task.target_group)
         tcity = str(target_grp.city)
@@ -323,7 +326,7 @@ class TaskRunner(Thread):
                     driver.switch_to.window(driver.window_handles[-1])
                     walk_on_site(driver, task_name)
                     save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"После серфинга сайта, кол-во вкладок: {len(driver.window_handles)}")
-                    log(user=self.task.owner, task=self.task, action='VISIT', extra={'visit_to_TARGET_url': url}, uid=self.uid)
+                    log(user=self.task.owner, task=self.task, action=f'VISIT, pid={thread_data.pid}', extra={'visit_to_TARGET_url': url}, uid=self.uid, pid=thread_data.pid)
                     for i in range(5):
                         driver.execute_script(f"window.scrollTo(0, {randint(300, 700)});")
                         sleep(randint(12, 24))
@@ -344,7 +347,7 @@ class TaskRunner(Thread):
                     if ((random.choice([True, False]) == True) and number_competitor_visit >= 1) :
                         log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ", enable_log_stalk)
                         log_stalk(task_name + "pager - Количество открытых вкладок " + str(len(driver.window_handles)), enable_log_stalk)
-                        log(user=self.task.owner, task=self.task, action='VISIT', extra={'visit_to_CONCURENT_url': url}, uid=self.uid)
+                        log(user=self.task.owner, task=self.task, action=f'VISIT, pid={thread_data.pid}', extra={'visit_to_CONCURENT_url': url}, uid=self.uid, pid=thread_data.pid)
                         link.click()
                         log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel1 = " + driver.title, enable_log_stalk)
                         log_stalk(task_name + "pager - Количество открытых вкладок 1 " + str(len(driver.window_handles)), enable_log_stalk)
@@ -378,7 +381,7 @@ class TaskRunner(Thread):
             next_page = pager.find_elements_by_tag_name('a')[-1]
             next_page.click()
             sleep(3)
-            log(user=self.task.owner, task=self.task, action='NEXT_PAGE', extra={'current_page': current_page}, uid=self.uid)
+            log(user=self.task.owner, task=self.task, action=f'NEXT_PAGE, pid={thread_data.pid}', extra={'current_page': current_page}, uid=self.uid, pid=thread_data.pid)
         if not_done_flag:
             log_stalk(task_name + "+++НА ЦЕЛЕВОЙ САЙТ ЗАХОДА НЕ БЫЛО!!!!!", enable_log_stalk)
             log_stalk(task_name + "+++not_done!!!!! - " + str(self.task.not_done), enable_log_stalk)

@@ -7,7 +7,7 @@
             <code>
                 {% for log in logs %}
                     <span class="log-row" data-log-uid="{{ log.uid }}">
-                    {{ log.datetime }} <a href="/task/{{ log.task.id }}/">Task {{ log.task.id }}</a> {{ log.create_time }} {{ log.action }} {{ log.extra|default:'' }} <br>
+                    {{ log.datetime }} <a href="/task/{{ log.task.id }}/">Task {{ log.task.id }}({{ log.pid }})</a> {{ log.create_time }} {{ log.action }} {{ log.extra|default:'' }} <br>
                     </span>
                 {% endfor %}
             </code>

@@ -129,6 +129,7 @@ class GroupLog(models.Model):
     level = models.TextField(default='INFO')
     extra = models.TextField(null=True, default='')
     uid = models.TextField()
+    pid = models.TextField(null=True)
 
 class Errors(models.Model):
     error_create_time = models.DateTimeField(default=timezone.now)
