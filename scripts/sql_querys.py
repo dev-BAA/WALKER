@@ -7,12 +7,19 @@ import datetime
 from time import sleep
 from datetime import datetime, timedelta
 from random import randint, choice
+from uuid import uuid4, UUID
 
 from django.utils import timezone
 from walker_panel.models import *
 from scripts.common_functions import check_dev, send_email
 
 common_info_table_id = 1
+logger = logging.getLogger('sql_querys')
+
+def log(user: User, task: GroupTask, action: str, level: str = 'info', extra: dict = None, uid: UUID = None, pid: str = None):
+    log_entry = GroupLog(owner=user, task=task, action=action, extra=json.dumps(extra), level=level, uid=uid, pid=pid)
+    log_entry.save()
+    logger.info("Task " + str(task.id) + ": " + action)
 
 # Сбрасываем параметры всех задач после внезапной перезагрузки
 def tasks_reset_reboot():

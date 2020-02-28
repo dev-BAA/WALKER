@@ -45,7 +45,7 @@ def group_page(request: WSGIRequest, group_id: Optional[int] = None):
     else:
         if group_id:
             group = Group.objects.get(id=group_id)
-            group_tasks = GroupTask.objects.filter(target_group_id=group_id)
+            group_tasks = GroupTask.objects.filter(target_group_id=group_id).order_by('id')
             return render(request, 'walker_panel/group.html',
                           {'form': GroupForm(instance=group), 'is_walker_enable': is_service_running('walker'), 'group_tasks': group_tasks, 'group': group})
         return render(request, 'walker_panel/group.html',
@@ -156,7 +156,7 @@ def historys(request: WSGIRequest):
 
 @login_required(login_url='/sign-in/')
 def results(request: WSGIRequest):
-    results = GroupTask.objects.all()
+    results = GroupTask.objects.all().order_by('target_group')
     stngs = Setting.objects.get(id=2)
     return render(request, 'walker_panel/results.html', {'results': results, 'stngs': stngs, 'is_walker_enable': is_service_running('walker')})
 

@@ -1,5 +1,7 @@
 import os, platform
 import logging
+import imghdr
+
 from typing import Dict
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
