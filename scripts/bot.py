@@ -477,7 +477,7 @@ class TaskRunner(Thread):
             driver.switch_to_window(handle)
             if needed_title in driver.title:
                 log_stalk(f" - !!!!!!!!!!!!!!!!!!! - RETURN1, ВКЛАДКА = {driver.title}", enable_log_stalk)
-                send_email(email_dev, "СМЕНА РЕГИОНА CLICK: ПОСЛЕ НАЖАТИЯ на GEOLINK", email_titel, f"Задача {task_name}, ВКЛАДКА = {driver.title}, ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ЧЕРЕЗ ФУНКЦИЮ в - {needed_title} ")
+                #send_email(email_dev, "СМЕНА РЕГИОНА CLICK: ПОСЛЕ НАЖАТИЯ на GEOLINK", email_titel, f"Задача {task_name}, ВКЛАДКА = {driver.title}, ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ЧЕРЕЗ ФУНКЦИЮ в - {needed_title} ")
                 return
 
 def get_driver(config: Dict) -> Chrome:

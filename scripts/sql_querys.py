@@ -132,19 +132,6 @@ def ci_reboot_reset():
         ci.last_task_ended = timezone.now()
         ci.save()
 
-"""
-ci = CommonInfo.objects.get(id=1)
-if ci.reboot_reset:
-    log_run(task_name + "ПОТОКИ - reboot_reset = True: сброс на False", enable_log_run)
-    ci.reboot_reset = False
-    ci.reboot_reset_time = timezone.now()
-    ci.last_task_ended = timezone.now()
-    ci.save()
-else:
-    ci.last_task_ended = timezone.now()
-    ci.save()            
-"""
-
 def ci_task_finish():
     ci = CommonInfo.objects.get(id=common_info_table_id)
     ci.last_task_ended = timezone.now()
@@ -153,6 +140,3 @@ def ci_task_finish():
 def error_save(task_name: str, proxy: str, city: str, template_div: bool, error_user_agent: str, error_flag: str, error_text: str):
     err = Errors(error_task_name=task_name, error_proxy=proxy, error_city=city, template_div=template_div, error_user_agent=error_user_agent, error_flag=error_flag ,error_text=error_text)
     err.save()
-
-#dgkfhdghfd
-#dsg3h477777777777777777777777777777777777
