@@ -41,6 +41,16 @@ SCREENSHOTS_DIR = './screenshots/'
 CAPTCHAS_DIR = './captchas/'
 YANDEX_URL = 'http://yandex.ru'
 
+stngs = Setting.objects.get(id=2)
+hour_start = stngs.workers_time_start
+hour_end = stngs.workers_time_end
+api_key = stngs.rucaptcha_key
+email_admin = stngs.email_admin
+email_dev = stngs.email_dev
+enable_log_run = stngs.enable_log_run
+enable_log_stalk = stngs.enable_log_stalk
+enable_log_proxy = stngs.enable_log_proxy
+
 if check_dev():
     email_titel = 'Site Walker DEV'
     screenshotdir_depth = 7
@@ -52,17 +62,11 @@ year = datetime.today().strftime("%Y")
 month = datetime.today().strftime("%m")
 day = datetime.today().strftime("%d")
 SCREENSHOTS_DIR_today = SCREENSHOTS_DIR + year + "." + month + "." + day + "/"
-SCREENSHOTS_DIR_older_week = SCREENSHOTS_DIR + year + "." + month + "." + str(int(day)-screenshotdir_depth) + "/"
-
-stngs = Setting.objects.get(id=2)
-hour_start = stngs.workers_time_start
-hour_end = stngs.workers_time_end
-api_key = stngs.rucaptcha_key
-email_admin = stngs.email_admin
-email_dev = stngs.email_dev
-enable_log_run = stngs.enable_log_run
-enable_log_stalk = stngs.enable_log_stalk
-enable_log_proxy = stngs.enable_log_proxy
+day_scr = str(int(day)-screenshotdir_depth)
+if len(day_scr) == 1:
+    day_scr = "0" + day_scr
+SCREENSHOTS_DIR_older_week = SCREENSHOTS_DIR + year + "." + month + "." + day_scr + "/"
+log_stalk(" ***** SCREENSHOTS_DIR_older_week: " + SCREENSHOTS_DIR_older_week, enable_log_stalk)
 
 thread_data = threading.local()
 #thread_data.div = False
@@ -531,7 +535,9 @@ def run():
             usedproxy_clear()
             cih_save(email_titel)
             ci_reset_status(True)
+    night_maintenance_text = "НОЧНОЕ СБРАСЫВАНИЕ КЭШЕЙ РАБОТЫ БОТА END"
     if datetime.now().hour == 5:
+        log_run(night_maintenance_text, enable_log_run)
         create_dir(SCREENSHOTS_DIR_today)
         delete_dir(SCREENSHOTS_DIR_older_week)
         ci = CommonInfo.objects.get(id=1)
