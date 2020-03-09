@@ -1,5 +1,5 @@
 import logging
-import os, platform
+import os, sys, platform
 import shutil
 import subprocess
 import asyncio
@@ -8,6 +8,7 @@ import string, random
 import psutil
 import smtplib
 
+sys.path.append("/root")
 from time import sleep
 from datetime import datetime, timedelta
 from user_agent import generate_user_agent
@@ -26,6 +27,7 @@ from django.db import IntegrityError
 #from walker_panel.models import Proxy, Proxy1
 from walker_panel.models import *
 #from sql_querys import usedproxy_add_addr
+from settings import *
 
 logger = logging.getLogger('bot')
 
@@ -106,10 +108,10 @@ def get_prestart_delay() -> int:
         return randint(10*60, 35*60)
 
 def send_email(email_to, sbjct: str, frm: str, mesage: str):
-    sender = 'site.walker@yandex.ru'
-    sender_password = '(OL>.lo9'
-    mail_lib = smtplib.SMTP_SSL('smtp.yandex.ru', 465)
-    mail_lib.login(sender, sender_password)
+    #sender = 'site.walker@yandex.ru'
+    #sender_password = '(OL>.lo9'
+    mail_lib = smtplib.SMTP_SSL(smtp_server, smtp_sever_port)
+    mail_lib.login(sender_mail, sender_password_mail)
     msg = MIMEText(mesage.encode('utf-8'), _charset='utf-8')
     msg['Subject'] = sbjct
     msg['From'] = frm
