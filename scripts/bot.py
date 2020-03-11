@@ -168,7 +168,7 @@ class TaskRunner(Thread):
         target_group = Group.objects.get(group_name=self.task.target_group)
         pl = str(target_group.proxy_list)
         logger.info(task_name + "ПРОКСИ ЛИСТ - " + pl)
-        check_free_ram(task_name, 400, "СТАРТ ЗАДАЧИ", enable_log_run)
+        check_free_ram(task_name, 400, "СТАРТ ЗАДАЧИ", enable_log_run, email_dev)
         GroupTask.objects.filter(id=self.task.id).update(running_today=F('running_today') + 1)
         GroupTask.objects.filter(id=self.task.id).update(last_start=timezone.now())
         self.task.refresh_from_db()

@@ -116,7 +116,7 @@ def send_email(email_to, sbjct: str, frm: str, mesage: str):
     msg['To'] = email_to
     mail_lib.sendmail(sender_mail, email_to, msg.as_string())
 
-def get_perf(task: str, info: str, ram_low: int, enable: bool):
+def get_perf(task: str, info: str, ram_low: int, enable: bool, msg_to: str):
     log_run(task + " " + info + " - CPU - " + str(psutil.cpu_percent()), enable)
     log_run(task + " " + info + " - RAM common - " + str(psutil.virtual_memory()), enable)
 
@@ -157,14 +157,14 @@ def get_perf(task: str, info: str, ram_low: int, enable: bool):
     log_run(task + " " + info + " - RAM [6] inactive - " + str(ram_6_wd), enable)
 
     if ram_1 < ram_low:
-        send_email("butalov.a@ya.ru", "RAM доступно меньше " + str(ram_low), 'Site Walker HOME', f"{task} \n ГДЕ: {info} \n RAM ВСЕГО: {ram_0} Мб \n RAM доступно для процессов: {ram_1} \n RAM используется в процентах: {ram_2_wd} \n RAM используется: {ram_3} Мб \n RAM free: {ram_4} Мб")
+        send_email(msg_to, "RAM доступно меньше " + str(ram_low), 'Site Walker HOME', f"{task} \n ГДЕ: {info} \n RAM ВСЕГО: {ram_0} Мб \n RAM доступно для процессов: {ram_1} \n RAM используется в процентах: {ram_2_wd} \n RAM используется: {ram_3} Мб \n RAM free: {ram_4} Мб")
 
-def check_free_ram(task: str, ram_low: int, where: str, enable: bool):
+def check_free_ram(task: str, ram_low: int, where: str, enable: bool, msg_to: str):
     while True:
         free_ram = psutil.virtual_memory()[1] // 1048576
         if free_ram < ram_low:
             log_run(task + "ПРОВЕРКА СВОБОДНОЙ RAM (" + where + "), МАЛО: " + str(free_ram) + " Мб", enable)
-            #send_email("butalov.a@ya.ru", "RAM меньше 400", 'Site Walker HOME', f"{task} \n ГДЕ: FREE RAM CHECK - FAIL - {str(free_ram)}")
+            #send_email(msg_to, "RAM меньше 400", 'Site Walker HOME', f"{task} \n ГДЕ: FREE RAM CHECK - FAIL - {str(free_ram)}")
             sleep(5*60)
         else:
             log_run(task + "ПРОВЕРКА СВОБОДНОЙ RAM (" + where + "), ДОСТАТОЧНО: " + str(free_ram) + " Мб", enable)
