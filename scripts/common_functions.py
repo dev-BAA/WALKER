@@ -108,15 +108,13 @@ def get_prestart_delay() -> int:
         return randint(10*60, 35*60)
 
 def send_email(email_to, sbjct: str, frm: str, mesage: str):
-    #sender = 'site.walker@yandex.ru'
-    #sender_password = '(OL>.lo9'
     mail_lib = smtplib.SMTP_SSL(smtp_server, smtp_sever_port)
     mail_lib.login(sender_mail, sender_password_mail)
     msg = MIMEText(mesage.encode('utf-8'), _charset='utf-8')
     msg['Subject'] = sbjct
     msg['From'] = frm
     msg['To'] = email_to
-    mail_lib.sendmail(sender, email_to, msg.as_string())
+    mail_lib.sendmail(sender_mail, email_to, msg.as_string())
 
 def get_perf(task: str, info: str, ram_low: int, enable: bool):
     log_run(task + " " + info + " - CPU - " + str(psutil.cpu_percent()), enable)

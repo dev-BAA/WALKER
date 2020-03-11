@@ -66,7 +66,6 @@ day_scr = str(int(day)-screenshotdir_depth)
 if len(day_scr) == 1:
     day_scr = "0" + day_scr
 SCREENSHOTS_DIR_older_week = SCREENSHOTS_DIR + year + "." + month + "." + day_scr + "/"
-log_stalk(" ***** SCREENSHOTS_DIR_older_week: " + SCREENSHOTS_DIR_older_week, enable_log_stalk)
 
 thread_data = threading.local()
 #thread_data.div = False

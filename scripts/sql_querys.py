@@ -1,9 +1,10 @@
-import os, platform
+import os, sys, platform
 import logging
 import random
 import operator
 import datetime
 
+sys.path.append("/root")
 from time import sleep
 from datetime import datetime, timedelta
 from random import randint, choice
@@ -12,6 +13,9 @@ from uuid import uuid4, UUID
 from django.utils import timezone
 from walker_panel.models import *
 from scripts.common_functions import check_dev, send_email
+
+stngs = Setting.objects.get(id=2)
+email_admin = stngs.email_admin
 
 common_info_table_id = 1
 logger = logging.getLogger('sql_querys')
@@ -121,7 +125,7 @@ def cih_save(email_titel: str):
     cih = CommonInfoHistory(create_time=date.date(), task_finished=ci.task_finished, task_crashed=ci.task_crashed, task_capched=ci.task_capched)
     cih.save()
     if ci.task_crashed >= 4:
-        send_email("butalov.a@ya.ru", "crashed", email_titel, " ci.task_crashed = " + str(ci.task_crashed))
+        send_email(email_admin, "crashed", email_titel, " ci.task_crashed = " + str(ci.task_crashed))
 
 def ci_reboot_reset():
     ci = CommonInfo.objects.get(id=common_info_table_id)
