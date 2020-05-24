@@ -336,31 +336,29 @@ class TaskRunner(Thread):
 
                 elif (current_page == 0 and tcompetitor_sites_len == 0) or is_competitor_site(url, tcompetitor_sites):
                     if ((random.choice([True, False]) == True) and number_competitor_visit >= 1) :
-                        log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ", enable_log_stalk)
-                        log_stalk(task_name + "pager - Количество открытых вкладок " + str(len(driver.window_handles)), enable_log_stalk)
                         log(user=self.task.owner, task=self.task, action=f'VISIT', extra={'visit_to_CONCURENT_url': url}, uid=self.uid, pid=thread_data.pid)
+                        prefix = "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ"
+                        log_stalk(f"{task_name} {prefix}, 1_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         link.click()
-                        log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel1 = " + driver.title, enable_log_stalk)
-                        log_stalk(task_name + "pager - Количество открытых вкладок 1 " + str(len(driver.window_handles)), enable_log_stalk)
+                        sleep(5)
+                        log_stalk(f"{task_name} {prefix}, 2_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         driver.switch_to.window(driver.window_handles[-1])
-                        log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel2 = " + driver.title, enable_log_stalk)
-                        log_stalk(task_name + "pager - Количество открытых вкладок 2 " + str(len(driver.window_handles)), enable_log_stalk)
+                        log_stalk(f"{task_name} {prefix}, 3_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         for i in range(5):
                             sleep(randint(3, 5))
                             driver.execute_script(f"window.scrollTo(0, {randint(300, 800)});")
-                            log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel3 = " + driver.title, enable_log_stalk)
-                            log_stalk(task_name + "pager - Количество открытых вкладок 3 " + str(len(driver.window_handles)), enable_log_stalk)
+                            log_stalk(f"{task_name} {prefix}, 3.{str(i)}_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
+                        sleep(1)
+                        driver.stop_client()
                         driver.close()
                         driver.switch_to.window(driver.window_handles[0])
                         for handle in driver.window_handles:
                             driver.switch_to_window(handle)
-                            log_stalk(f"{task_name}###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ - ВКЛАДКА = {driver.title}", enable_log_stalk)
+                            log_stalk(f"{task_name} {prefix}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                             if "нашлось" in driver.title:
-                                log_stalk(f"{task_name}###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ - RETURN, ВКЛАДКА = {driver.title}", enable_log_stalk)
-                                #return
+                                log_stalk(f"{task_name} {prefix} - яндекс поиск, ВКЛАДКА = {driver.title}", enable_log_stalk)
                                 continue
-                        log_stalk(task_name + "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ, Titel4 = " + driver.title, enable_log_stalk)
-                        log_stalk(task_name + "$$ Количество открытых вкладок: " + str(len(driver.window_handles)), enable_log_stalk)
+                        log_stalk(f"{task_name} {prefix}, 4_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         number_competitor_visit -= 1
                         log_stalk(f"{task_name} Осталось зайти к конкурентам: {number_competitor_visit}", enable_log_stalk)
             if (exitFlag):
