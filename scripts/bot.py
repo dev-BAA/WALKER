@@ -234,12 +234,12 @@ class TaskRunner(Thread):
                 ## xpath=//button[contains(.,'Найти')]
                 button.click()
                 sleep(5)
-                save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} button.click() title: {driver.title}")
+                save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} button.click()")
                 sleep(1)
                 if not "нашлось" in driver.title:
                     letter_by_letter(f"{task_name}ПОИСКОВЫЙ ЗАПРОС:", "id", "text", self.task.search_query, driver, True)
                     sleep(5)
-                    save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} ENTER title: {driver.title}")
+                    save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"{task_name}ПОИСКОВЫЙ ЗАПРОС: WHILE element {i} ENTER")
                     sleep(1)
                 sleep(5)
 
