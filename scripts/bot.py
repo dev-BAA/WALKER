@@ -66,6 +66,10 @@ day_scr = str(int(day)-screenshotdir_depth)
 if len(day_scr) == 1:
     day_scr = "0" + day_scr
 SCREENSHOTS_DIR_older_week = SCREENSHOTS_DIR + year + "." + month + "." + day_scr + "/"
+SCREENSHOTS_DIR_older_28 = SCREENSHOTS_DIR + year + "." + str(int(month)-1) + ".28/"
+SCREENSHOTS_DIR_older_29 = SCREENSHOTS_DIR + year + "." + str(int(month)-1) + ".29/"
+SCREENSHOTS_DIR_older_30 = SCREENSHOTS_DIR + year + "." + str(int(month)-1) + ".30/"
+SCREENSHOTS_DIR_older_31 = SCREENSHOTS_DIR + year + "." + str(int(month)-1) + ".31/"
 
 thread_data = threading.local()
 #thread_data.div = False
@@ -348,9 +352,9 @@ class TaskRunner(Thread):
                             sleep(randint(3, 5))
                             driver.execute_script(f"window.scrollTo(0, {randint(300, 800)});")
                             log_stalk(f"{task_name} {prefix}, 3.{str(i)}_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
-                        sleep(1)
+                        sleep(3)
                         driver.stop_client()
-                        driver.close()
+                        #driver.close()
                         driver.switch_to.window(driver.window_handles[0])
                         for handle in driver.window_handles:
                             driver.switch_to_window(handle)
@@ -537,6 +541,11 @@ def run():
         log_run(night_maintenance_text, enable_log_run)
         create_dir(SCREENSHOTS_DIR_today)
         delete_dir(SCREENSHOTS_DIR_older_week)
+        if day_scr == "03":
+            delete_dir(SCREENSHOTS_DIR_older_28)
+            delete_dir(SCREENSHOTS_DIR_older_29)
+            delete_dir(SCREENSHOTS_DIR_older_30)
+            delete_dir(SCREENSHOTS_DIR_older_31)
         ci = CommonInfo.objects.get(id=1)
         if ci.today_reset:
             ci_reset_status(False)
