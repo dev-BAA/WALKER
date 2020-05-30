@@ -354,7 +354,7 @@ class TaskRunner(Thread):
                             log_stalk(f"{task_name} {prefix}, 3.{str(i)}_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         sleep(3)
                         driver.stop_client()
-                        #driver.close()
+                        driver.close()
                         driver.switch_to.window(driver.window_handles[0])
                         for handle in driver.window_handles:
                             driver.switch_to_window(handle)
