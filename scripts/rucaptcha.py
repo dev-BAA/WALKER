@@ -15,6 +15,11 @@ req_url = base_url + '/in.php'
 res_url = base_url + '/res.php'
 load_url = base_url + '/load.php'
 
+stngs = Setting.objects.get(id=2)
+enable_log_run = stngs.enable_log_run
+enable_log_stalk = stngs.enable_log_stalk
+enable_log_proxy = stngs.enable_log_proxy
+
 def save_png(path: str, name: str, url: str):
     file = path + name + ".png"
     urllib.request.urlretrieve(url, file)
@@ -102,11 +107,13 @@ def free_captcha(task_name: str, where: str, driver: Chrome):
                 try:
                     log_stalk(task_name + " GET КАПЧА src ", enable_log_stalk)
                     #captcha_src = driver.find_elements_by_class_name('form__captcha')[0].get_attribute('src')
-                    captcha_src = driver.find_elements_by_class_name('captcha_image')[0].get_attribute('src')
+                    #captcha_src = driver.find_elements_by_class_name('captcha_image')[0].get_attribute('src')
+                    captcha_src = driver.find_elements_by_class_name('captcha__image')[0].get_attribute('src')
+                    save_png(CAPTCHAS_DIR, taskname, captcha_src)
                 except Exception as e:
                     print(e)
                     log_stalk(task_name + " GET КАПЧА src " + str(e), enable_log_stalk)
-                save_png(CAPTCHAS_DIR, taskname, captcha_src)
+                #save_png(CAPTCHAS_DIR, taskname, captcha_src)
 
 
                 file = CAPTCHAS_DIR + taskname + ".png"

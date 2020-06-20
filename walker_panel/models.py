@@ -92,6 +92,7 @@ class Group(models.Model):
     competitor_sites = models.TextField(null=True, blank=True)
     city = models.TextField(default=None, null=True)
     proxy_list = models.CharField(default='1', max_length=3, choices=PROXY_CHOICES, help_text="*выберите список прокси адресов для этой группы")
+    weekend = models.BooleanField(default=True)
 
     def __str__(self):
         if self.group_name == None:
@@ -116,6 +117,7 @@ class GroupTask(models.Model):
     #position_yesterday = models.IntegerField(default=0)
     position_yesterday = models.TextField(null=True)
     status = models.BooleanField(default=True)
+    weekend = models.BooleanField(default=True)
     last_start = models.DateTimeField(default=timezone.now, null=True)
 
     def __str__(self):

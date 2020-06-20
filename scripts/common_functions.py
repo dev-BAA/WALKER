@@ -39,6 +39,7 @@ line_short = "-------------------------"
 line_double = "===================================================="
 line_double_short = "=========================="
 enable_log = True
+CAPTCHAS_DIR = './captchas/'
 
 def log_run(string: str, enable: bool):
     if enable:
@@ -80,6 +81,13 @@ def save_screenlog(driver: Chrome, path: str, name: str, where: str):
         f.write(driver.page_source)
     driver.save_screenshot(path + _string + ".png")
     log_stalk(_string + " (png, html)", enable_log)
+
+def handle_enumeration(driver: Chrome):
+    _string = "Вкладки: "
+    for handle in driver.window_handles:
+        driver.switch_to_window(handle)
+        _string = _string + driver.title + ", "
+    return _string
 
 def create_dir(path: str):
     if not os.path.exists(path):

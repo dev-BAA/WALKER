@@ -15,7 +15,7 @@ from time import sleep
 from threading import Thread, active_count
 from typing import Dict
 from datetime import datetime, timedelta
-#from datetime import timedelta
+
 #from bs4 import BeautifulSoup
 
 from django.db.models import Count, F, Value
@@ -38,7 +38,6 @@ from scripts.rucaptcha import *
 logger = logging.getLogger('bot')
 
 SCREENSHOTS_DIR = './screenshots/'
-CAPTCHAS_DIR = './captchas/'
 YANDEX_URL = 'http://yandex.ru'
 
 stngs = Setting.objects.get(id=2)
@@ -58,6 +57,7 @@ else:
     email_titel = 'Site Walker'
     screenshotdir_depth = 3
 
+weekno = datetime.today().weekday()
 year = datetime.today().strftime("%Y")
 month = datetime.today().strftime("%m")
 day = datetime.today().strftime("%d")
@@ -342,19 +342,31 @@ class TaskRunner(Thread):
                     if ((random.choice([True, False]) == True) and number_competitor_visit >= 1) :
                         log(user=self.task.owner, task=self.task, action=f'VISIT', extra={'visit_to_CONCURENT_url': url}, uid=self.uid, pid=thread_data.pid)
                         prefix = "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ"
+                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"1_До клика, кол-во вкладок: {len(driver.window_handles)}")
                         log_stalk(f"{task_name} {prefix}, 1_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
+                        log_stalk(f"{task_name} {prefix}, 1_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
                         link.click()
                         sleep(5)
+                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"2_После клика, кол-во вкладок: {len(driver.window_handles)}")
                         log_stalk(f"{task_name} {prefix}, 2_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
+                        log_stalk(f"{task_name} {prefix}, 2_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
                         driver.switch_to.window(driver.window_handles[-1])
+                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"3_После клика, кол-во вкладок: {len(driver.window_handles)}")
                         log_stalk(f"{task_name} {prefix}, 3_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
+                        log_stalk(f"{task_name} {prefix}, 3_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
                         for i in range(5):
                             sleep(randint(3, 5))
                             driver.execute_script(f"window.scrollTo(0, {randint(300, 800)});")
                             log_stalk(f"{task_name} {prefix}, 3.{str(i)}_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
+                            log_stalk(f"{task_name} {prefix}, 3.{str(i)}_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
                         sleep(3)
                         driver.stop_client()
-                        driver.close()
+                        sleep(2)
+                        try:
+                            driver.close()
+                            log_stalk( f"{task_name} {prefix}, Driver Close OK_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
+                        except Exception as e:
+                            log_stalk(f"{task_name} {prefix}, Driver Close ERROR_Переисление вкладок = {handle_enumeration(driver)}, Error = {e}", enable_log_stalk)
                         driver.switch_to.window(driver.window_handles[0])
                         for handle in driver.window_handles:
                             driver.switch_to_window(handle)
@@ -490,6 +502,13 @@ def get_driver(config: Dict) -> Chrome:
     capabilities = DesiredCapabilities.CHROME
     options.add_argument(f"--window-size={config['resolution']}")
     options.add_argument("--disable-dev-shm-usage")
+    #------------------------------------------------------
+    options.add_argument("--disable-infobars")
+    options.add_argument("--disable-browser-side-navigation")
+    options.add_argument("--disable-gpu")
+    #options.add_argument("enable-automation")
+    #options.add_argument("start-maximized")
+    #------------------------------------------------------
     options.add_argument("--no-sandbox")
     options.add_argument(f"user-agent={config['user-agent']}")
     options.add_argument("--headless")
@@ -564,27 +583,28 @@ def run():
             log_run(run_text + line_double + ">", enable_log_stalk)
             thread_enum(run_text)
             for task in GroupTask.objects.filter(status=True).order_by('id'):
-                if task.launches_per_day > task.running_today:
-                    shed = Scheduler.objects.get(task_id=task.id)
-                    shed = shed.get_schedule()
-                    shed_len = len(shed)
-                    element = shed[task.running_today]
-                    log_run(run_text + "Задача " + str(task.id) + ": следующий запуск задачи в " + str(element) + " (element = " + str(task.running_today) + ")", enable_log_run)
-                    hour = element[0]
-                    minutes = element[1]
-                    if datetime.now().hour == hour:
-                        log_run(run_text + "Задача " + str(task.id) + ": час = " + str(hour), enable_log_run)
-                        if datetime.now().minute == minutes:
-                            thread_start(threads, task, task.id, hour, minutes, run_text)
-                            if task.launches_per_day > (task.running_today + 1) and shed_len != 1:
-                                element_next = shed[task.running_today + 1]
-                                hour_next = element_next[0]
-                                minutes_next = element_next[1]
-                                log_run(run_text + "Задача " + str(task.id) + ": NEXT = " + str(hour_next) + ":" + str(minutes_next), enable_log_run)
-                                if element[0] == element_next[0] and element[1] == element_next[1]:
-                                    thread_start(threads, task, task.id, hour, minutes, run_text)
-                else:
-                    log_run(run_text + "Задача " + str(task.id) + ": ВСЕ ЗАПЛАНИРОВАННЫЕ НА ДЕНЬ ЗАПУСКИ ЗАДАЧИ ВЫПОЛНЕНЫ", enable_log_run)
+                if weekno < 5 or (weekno > 4 and task.weekend):
+                    if task.launches_per_day > task.running_today:
+                        shed = Scheduler.objects.get(task_id=task.id)
+                        shed = shed.get_schedule()
+                        shed_len = len(shed)
+                        element = shed[task.running_today]
+                        log_run(run_text + "Задача " + str(task.id) + ": следующий запуск задачи в " + str(element) + " (element = " + str(task.running_today) + ")", enable_log_run)
+                        hour = element[0]
+                        minutes = element[1]
+                        if datetime.now().hour == hour:
+                            log_run(run_text + "Задача " + str(task.id) + ": час = " + str(hour), enable_log_run)
+                            if datetime.now().minute == minutes:
+                                thread_start(threads, task, task.id, hour, minutes, run_text)
+                                if task.launches_per_day > (task.running_today + 1) and shed_len != 1:
+                                    element_next = shed[task.running_today + 1]
+                                    hour_next = element_next[0]
+                                    minutes_next = element_next[1]
+                                    log_run(run_text + "Задача " + str(task.id) + ": NEXT = " + str(hour_next) + ":" + str(minutes_next), enable_log_run)
+                                    if element[0] == element_next[0] and element[1] == element_next[1]:
+                                        thread_start(threads, task, task.id, hour, minutes, run_text)
+                    else:
+                        log_run(run_text + "Задача " + str(task.id) + ": ВСЕ ЗАПЛАНИРОВАННЫЕ НА ДЕНЬ ЗАПУСКИ ЗАДАЧИ ВЫПОЛНЕНЫ", enable_log_run)
             log_run(run_text + "<" + line_double, enable_log_stalk)
             sleep(60)
         except KeyboardInterrupt:

@@ -39,6 +39,10 @@ def group_page(request: WSGIRequest, group_id: Optional[int] = None):
                 instance = get_object_or_404(Group, id=form.cleaned_data.get('id'))
                 form = GroupForm(request.POST or None, instance=instance)
                 form.save()
+                group_tasks = GroupTask.objects.filter(target_group_id=group_id)
+                for task in group_tasks:
+                    task.weekend = instance.weekend
+                    task.save()
             return redirect('/groups/')
         return render(request, 'walker_panel/group.html',
                       {'form': form, 'is_walker_enable': is_service_running('walker')})

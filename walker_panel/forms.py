@@ -16,13 +16,14 @@ class GTaskForm(ModelForm):
     name = CharField(widget=HiddenInput(), required=False)
     id = IntegerField(widget=HiddenInput(), required=False)
     target_group = ModelChoiceField(widget=HiddenInput(), queryset = Group.objects.all())
+    weekend = BooleanField(label='Заходить по выходным дням', required=False)
 
     search_query = CharField(widget=TextInput(attrs={'style': 'width:450px'}), label='Поисковый запрос', help_text='*по этому запросу мы будем искать сайт в Яндексе')
     launches_per_day = IntegerField(widget=TextInput(attrs={'style': 'width:50px'}), label='Количество запусков в день', help_text='*максимальное количество запусков в день (0 — без ограничений)')
 
     class Meta:
         model = GroupTask
-        fields = ['name', 'id', 'target_group', 'search_query', 'launches_per_day']
+        fields = ['name', 'id', 'target_group', 'search_query', 'launches_per_day', 'weekend']
         widgets = {
             'name': TextInput(attrs={'name': 'name'}),
         }
@@ -34,10 +35,11 @@ class GroupForm(ModelForm):
     target_url = CharField(widget=TextInput(attrs={'style': 'width:400px'}), label='Целевой сайт', help_text=f'*на этом сайте мы будем проводить больше всего времени и выполнять целевые действия')
     competitor_sites = CharField(label="Сайты конкурентов (в столбик)", widget=Textarea(attrs={}), help_text='*эти сайты мы будем быстро покидать', required=False)
     city = CharField(label='Населённый пункт')
+    weekend = BooleanField(label='Заходить по выходным дням', required=False)
 
     class Meta:
         model = Group
-        fields = ['name', 'id', 'group_name', 'target_url', 'city', 'proxy_list']
+        fields = ['name', 'id', 'group_name', 'target_url', 'city', 'weekend', 'proxy_list']
         widgets = {
             'city': TextInput(attrs={'name': 'city'}),
         }
