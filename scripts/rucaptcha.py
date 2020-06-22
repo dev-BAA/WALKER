@@ -106,11 +106,12 @@ def free_captcha(task_name: str, where: str, driver: Chrome):
 
                 save_screenshots(CAPTCHAS_DIR, taskname, " СОХРАНЯЕМ КАПЧУ на hdd", driver)
                 try:
-                    log_stalk(task_name + " GET КАПЧА src ", enable_log_stalk)
+                    log_stalk(task_name + " GET КАПЧА src 1", enable_log_stalk)
                     #captcha_src = driver.find_elements_by_class_name('form__captcha')[0].get_attribute('src')
                     #captcha_src = driver.find_elements_by_class_name('captcha_image')[0].get_attribute('src')
                     captcha_src = driver.find_elements_by_class_name('captcha__image')[0].get_attribute('src')
-                    save_png(CAPTCHAS_DIR, taskname, captcha_src)
+                    log_stalk(task_name + " GET КАПЧА src 2 - " + str(captcha_src), enable_log_stalk)
+                    save_png(CAPTCHAS_DIR, taskname, str(captcha_src))
                 except Exception as e:
                     print(e)
                     log_stalk(task_name + " GET КАПЧА src " + str(e), enable_log_stalk)
