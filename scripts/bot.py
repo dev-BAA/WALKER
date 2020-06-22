@@ -402,7 +402,18 @@ class TaskRunner(Thread):
             i += 1
             if not ModelProxy.objects.filter(owner=self.task.owner).count():
                 return config
-            proxy = random.choice(ModelProxy.objects.filter(owner=self.task.owner).filter(status=True))
+            """
+            while True:
+                if ModelProxy.objects.filter(owner=self.task.owner).filter(status=True).count() == 0:
+                    sleep(15)
+                else:
+                    proxy = random.choice(ModelProxy.objects.filter(owner=self.task.owner).filter(status=True))
+                    break
+            """
+            try:
+                proxy = random.choice(ModelProxy.objects.filter(owner=self.task.owner).filter(status=True))
+            except Exception as e:
+                log_stalk(f"{task_name} , Ошибка получения свободного прокси адреса, Error = {e}", enable_log_stalk)
             thread_data.proxy = f"{proxy.host}:{proxy.port}"
             log_proxy(f"{task_name}КОНФИГУРАЦИЯ БРАУЗЕРА - {i} итерация ВЫБРАН ПРОКСИ: {thread_data.proxy}", enable_log_proxy)
             if not UsedProxy.objects.filter(address=f"{thread_data.proxy}").exists():
