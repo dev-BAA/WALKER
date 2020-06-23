@@ -414,6 +414,7 @@ class TaskRunner(Thread):
                 proxy = random.choice(ModelProxy.objects.filter(owner=self.task.owner).filter(status=True))
             except Exception as e:
                 log_stalk(f"{task_name} , Ошибка получения свободного прокси адреса, Error = {e}", enable_log_stalk)
+                error_save(task_name, "-", "-", "-", config['user-agent'], "-", f"Ошибка получения свободного прокси адреса, Error = {e}, Проверь прокси лист у задачи!")
             thread_data.proxy = f"{proxy.host}:{proxy.port}"
             log_proxy(f"{task_name}КОНФИГУРАЦИЯ БРАУЗЕРА - {i} итерация ВЫБРАН ПРОКСИ: {thread_data.proxy}", enable_log_proxy)
             if not UsedProxy.objects.filter(address=f"{thread_data.proxy}").exists():
