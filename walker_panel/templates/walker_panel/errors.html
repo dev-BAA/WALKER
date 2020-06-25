@@ -1,0 +1,44 @@
+{% extends 'walker_panel/base.html' %}
+
+{% block content %}
+
+    <div class="row">
+        <table class="table table-sm table-striped">
+              <thead>
+                <tr class="table-secondary">
+                  <th scope="col">ДАТА</th>
+                  <th scope="col">ЗАДАЧА</th>
+                  <th scope="col">ПРОКСИ</th>
+                  <th scope="col">ГОРОД</th>
+                  <th scope="col">ШАБЛОН</th>
+                  <th scope="col">USER-AGENT</th>
+                  <th scope="col">ОШИБКА</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for error in errors reversed %}
+                <tr>
+                  <th scope="row"> {{ error.error_create_time|date}} </th>
+                  <td> {{ error.error_task_name }} </td>
+                  <td> {{ error.error_proxy }} </td>
+                  <td> {{ error.error_city }} </td>
+                  <td> {{ error.template_div }} </td>
+                  <td> {{ error.error_user_agent }} </td>
+                  <td> {{ error.error_text }} </td>
+                </tr>
+                {% endfor %}
+
+              </tbody>
+        </table>
+
+    </div>
+    <script>
+    $(".log-row").on('mouseover',   function(e){
+        var uid = $(this).data('log-uid');
+
+        $(`.log-row`).removeClass('highlight-row');
+        $(`.log-row[data-log-uid=${uid}]`).addClass('highlight-row');
+
+    })
+    </script>
+{% endblock %}

@@ -159,6 +159,11 @@ def historys(request: WSGIRequest):
     return render(request, 'walker_panel/historys.html', {'historys': historys, 'is_walker_enable': is_service_running('walker')})
 
 @login_required(login_url='/sign-in/')
+def errors(request: WSGIRequest):
+    errors = Errors.objects.all()
+    return render(request, 'walker_panel/errors.html', {'errors': errors, 'is_walker_enable': is_service_running('walker')})
+
+@login_required(login_url='/sign-in/')
 def results(request: WSGIRequest):
     results = GroupTask.objects.all().order_by('target_group')
     stngs = Setting.objects.get(id=2)
