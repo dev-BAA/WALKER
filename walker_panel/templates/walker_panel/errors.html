@@ -18,7 +18,7 @@
               <tbody>
                 {% for error in errors reversed %}
                 <tr>
-                  <th scope="row"> {{ error.error_create_time|date:"M d, h:m"}} </th>
+                  <th scope="row"> {{ error.error_create_time|date:"M d, H:i"}} </th>
                   <td> {{ error.error_task_name }} </td>
                   <td> {{ error.error_proxy }} </td>
                   <td> {{ error.error_city }} </td>
