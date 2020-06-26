@@ -18,13 +18,13 @@
               <tbody>
                 {% for error in errors reversed %}
                 <tr>
-                  <th scope="row"> {{ error.error_create_time|date:"M d, H:i"}} </th>
-                  <td> {{ error.error_task_name }} </td>
+                  <th scope="row"> {{ error.error_create_time|date:"M d, H:i"}}  </th>
+                  <td> <span class="is-important"> {{ error.error_task_name }} </span> </td>
                   <td> {{ error.error_proxy }} </td>
                   <td> {{ error.error_city }} </td>
                   <td> {{ error.template_div }} </td>
                   <td> {{ error.error_user_agent }} </td>
-                  <td> {{ error.error_text }} </td>
+                  <td class="is-important"> {{ error.error_text }} </td>
                 </tr>
                 {% endfor %}
 
