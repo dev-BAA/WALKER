@@ -142,5 +142,10 @@ def ci_task_finish():
     ci.save()
 
 def error_save(task_name: str, proxy: str, city: str, template_div: bool, error_user_agent: str, error_flag: str, error_text: str):
+    task_name = task_name.replace('( ):', '')
     err = Errors(error_task_name=task_name, error_proxy=proxy, error_city=city, template_div=template_div, error_user_agent=error_user_agent, error_flag=error_flag ,error_text=error_text)
     err.save()
+
+def active_proxy(count_active_proxy: int):
+    count = CountActiveProxy(active_proxy = count_active_proxy)
+    count.save()

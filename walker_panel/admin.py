@@ -66,6 +66,11 @@ class CommonInfoHistoryAdmin(admin.ModelAdmin):
   class Meta:
     model = models.CommonInfoHistory
 
+class CountActiveProxyAdmin(admin.ModelAdmin):
+  list_display = [field.name for field in models.CountActiveProxy._meta.fields]
+  class Meta:
+    model = models.CountActiveProxy
+
 admin.site.register(models.Proxy, ProxyAdmin)
 admin.site.register(models.Proxy1, Proxy1Admin)
 admin.site.register(models.UsedProxy, UsedProxyAdmin)
@@ -78,4 +83,5 @@ admin.site.register(models.GroupTask, GroupTaskAdmin)
 admin.site.register(models.GroupLog, GroupLogAdmin)
 admin.site.register(models.CommonInfo, CommonInfoAdmin)
 admin.site.register(models.CommonInfoHistory, CommonInfoHistoryAdmin)
+admin.site.register(models.CountActiveProxy, CountActiveProxyAdmin)
 

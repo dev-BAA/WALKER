@@ -142,3 +142,7 @@ class Errors(models.Model):
     error_user_agent = models.TextField(null=True)
     error_flag = models.TextField(null=True)
     error_text = models.TextField(null=True)
+
+class CountActiveProxy(models.Model):
+    create_time = models.DateTimeField(default=timezone.now, null=True)
+    active_proxy = models.IntegerField(null=True)

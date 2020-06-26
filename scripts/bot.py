@@ -55,7 +55,7 @@ if check_dev():
     screenshotdir_depth = 7
 else:
     email_titel = 'Site Walker'
-    screenshotdir_depth = 3
+    screenshotdir_depth = 1
 
 weekno = datetime.today().weekday()
 year = datetime.today().strftime("%Y")
@@ -531,6 +531,7 @@ def get_driver(config: Dict) -> Chrome:
 def thread_enum(where: str):
     log_run(where + line_short, enable_log_stalk)
     log_run(where + " КОЛИЧЕСТВО ПОТОКОВ: " + str(active_count()), enable_log_run)
+    active_proxy(int(active_count()) - 1)
     for thread in threading.enumerate():
         log_run(where + " ПОТОК: " + thread.name, enable_log_run)
     log_run(where + line_short, enable_log_stalk)
