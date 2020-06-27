@@ -24,7 +24,6 @@ from typing import List, Union, Dict, Tuple, Optional as Opt
 from aiohttp import ClientSession, BasicAuth
 from django.db import IntegrityError
 
-#from walker_panel.models import Proxy, Proxy1
 from walker_panel.models import *
 #from sql_querys import usedproxy_add_addr
 from settings import *

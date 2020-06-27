@@ -2,6 +2,7 @@ import os, platform
 import logging
 import imghdr
 import urllib
+import requests
 
 from typing import Dict
 from selenium.webdriver import ActionChains
