@@ -342,18 +342,22 @@ class TaskRunner(Thread):
                     if ((random.choice([True, False]) == True) and number_competitor_visit >= 1) :
                         log(user=self.task.owner, task=self.task, action=f'VISIT', extra={'visit_to_CONCURENT_url': url}, uid=self.uid, pid=thread_data.pid)
                         prefix = "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ"
-                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"1_До клика, кол-во вкладок: {len(driver.window_handles)}")
+
                         log_stalk(f"{task_name} {prefix}, 1_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         log_stalk(f"{task_name} {prefix}, 1_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
+                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"1_До клика, кол-во вкладок: {len(driver.window_handles)}")
                         link.click()
                         sleep(5)
-                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"2_После клика, кол-во вкладок: {len(driver.window_handles)}")
+
                         log_stalk(f"{task_name} {prefix}, 2_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         log_stalk(f"{task_name} {prefix}, 2_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
+                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"2_После клика, кол-во вкладок: {len(driver.window_handles)}")
                         driver.switch_to.window(driver.window_handles[-1])
-                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"3_После клика, кол-во вкладок: {len(driver.window_handles)}")
+                        sleep(2)
+
                         log_stalk(f"{task_name} {prefix}, 3_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         log_stalk(f"{task_name} {prefix}, 3_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
+                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"3_После клика, кол-во вкладок: {len(driver.window_handles)}")
                         for i in range(5):
                             sleep(randint(3, 5))
                             driver.execute_script(f"window.scrollTo(0, {randint(300, 800)});")
