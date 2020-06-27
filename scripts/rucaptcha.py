@@ -116,14 +116,14 @@ def free_captcha(task_name: str, where: str, driver: Chrome):
                     #captcha_src2 = driver.find_elements_by_class_name('captcha__image').get_attribute('src')
                     #log_stalk(task_name + " GET КАПЧА src 22 - " + str(captcha_src2), enable_log_stalk)
 
-                    log_stalk(task_name + " GET КАПЧА src 23 ----", enable_log_stalk)
-                    captcha_src3 = driver.find_elements_by_class_name('captcha__image')
-                    log_stalk(task_name + " GET КАПЧА src 23 - " + str(captcha_src3), enable_log_stalk)
+                    #log_stalk(task_name + " GET КАПЧА src 23 ----", enable_log_stalk)
+                    #captcha_src3 = driver.find_elements_by_class_name('captcha__image')
+                    #log_stalk(task_name + " GET КАПЧА src 23 - " + str(captcha_src3), enable_log_stalk)
 
                     log_stalk(task_name + " GET КАПЧА src 24 ----", enable_log_stalk)
                     captcha_src4 = driver.find_element_by_xpath("//div[@class='captcha__image']/img").get_attribute("src")
                     log_stalk(task_name + " GET КАПЧА src 24 - " + str(captcha_src4), enable_log_stalk)
-                    save_png(CAPTCHAS_DIR, taskname, str(captcha_src))
+                    save_png(CAPTCHAS_DIR, taskname, str(captcha_src4))
                 except Exception as e:
                     print(e)
                     log_stalk(task_name + " GET КАПЧА src " + str(e), enable_log_stalk)
