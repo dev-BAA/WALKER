@@ -12,6 +12,10 @@ from django.contrib.auth.decorators import login_required
 from django.core.handlers.wsgi import WSGIRequest
 from django.utils import timezone
 
+import urllib, base64, io
+import numpy as np
+import matplotlib.pyplot as plt
+
 from walker_panel.forms import *
 from walker_panel.models import *
 from scripts.sql_querys import *

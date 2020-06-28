@@ -18,6 +18,7 @@ res_url = base_url + '/res.php'
 load_url = base_url + '/load.php'
 
 stngs = Setting.objects.get(id=2)
+api_key = stngs.rucaptcha_key
 enable_log_run = stngs.enable_log_run
 enable_log_stalk = stngs.enable_log_stalk
 enable_log_proxy = stngs.enable_log_proxy

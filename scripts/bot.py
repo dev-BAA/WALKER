@@ -43,7 +43,6 @@ YANDEX_URL = 'http://yandex.ru'
 stngs = Setting.objects.get(id=2)
 hour_start = stngs.workers_time_start
 hour_end = stngs.workers_time_end
-api_key = stngs.rucaptcha_key
 email_admin = stngs.email_admin
 email_dev = stngs.email_dev
 enable_log_run = stngs.enable_log_run
@@ -344,33 +343,38 @@ class TaskRunner(Thread):
                         prefix = "###  ЗАХОДИМ на САЙТ КОНКУРЕНТОВ"
 
                         log_stalk(f"{task_name} {prefix}, 1_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
-                        log_stalk(f"{task_name} {prefix}, 1_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
-                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"1_До клика, кол-во вкладок: {len(driver.window_handles)}")
+                        log_stalk(f"{task_name} {prefix}, 1_Перечисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
+                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"1_До клика, кол-во вкладок: {str(len(driver.window_handles))}")
+                        sleep(2)
                         link.click()
                         sleep(5)
 
                         log_stalk(f"{task_name} {prefix}, 2_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
-                        log_stalk(f"{task_name} {prefix}, 2_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
-                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"2_После клика, кол-во вкладок: {len(driver.window_handles)}")
+                        log_stalk(f"{task_name} {prefix}, 2_Перечисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
+                        #save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"2_После клика, кол-во вкладок: {str(len(driver.window_handles))}")
                         driver.switch_to.window(driver.window_handles[-1])
                         sleep(2)
+                        if driver.title == "":
+                            log_stalk(f"{task_name} {prefix}, 2_Титуль пустой = {driver.title}", enable_log_stalk)
+                        else:
+                            log_stalk(f"{task_name} {prefix}, 2_Титуль не пустой = {driver.title}", enable_log_stalk)
 
                         log_stalk(f"{task_name} {prefix}, 3_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
-                        log_stalk(f"{task_name} {prefix}, 3_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
-                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"3_После клика, кол-во вкладок: {len(driver.window_handles)}")
+                        log_stalk(f"{task_name} {prefix}, 3_Перечисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
+                        save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"3_После клика, кол-во вкладок: {str(len(driver.window_handles))}")
                         for i in range(5):
                             sleep(randint(3, 5))
                             driver.execute_script(f"window.scrollTo(0, {randint(300, 800)});")
                             log_stalk(f"{task_name} {prefix}, 3.{str(i)}_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
-                            log_stalk(f"{task_name} {prefix}, 3.{str(i)}_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
+                            log_stalk(f"{task_name} {prefix}, 3.{str(i)}_Перечисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
                         sleep(3)
                         driver.stop_client()
                         sleep(2)
                         try:
                             driver.close()
-                            log_stalk( f"{task_name} {prefix}, Driver Close OK_Переисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
+                            log_stalk( f"{task_name} {prefix}, Driver Close OK_Перечисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
                         except Exception as e:
-                            log_stalk(f"{task_name} {prefix}, Driver Close ERROR_Переисление вкладок = {handle_enumeration(driver)}, Error = {e}", enable_log_stalk)
+                            log_stalk(f"{task_name} {prefix}, Driver Close ERROR_Перечисление вкладок = {handle_enumeration(driver)}, Error = {e}", enable_log_stalk)
                         driver.switch_to.window(driver.window_handles[0])
                         for handle in driver.window_handles:
                             driver.switch_to_window(handle)
