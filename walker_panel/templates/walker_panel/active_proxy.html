@@ -1,34 +1,13 @@
 {% extends 'walker_panel/base.html' %}
 
 {% block content %}
-
     <div class="row">
-        <table class="table table-sm table-striped"  style="width: 25%">
-              <thead>
-                <tr class="table-secondary">
-                  <th scope="col" style="width: 8.33%">ДАТА</th>
-                  <th scope="col" style="width: 8.33%">AP</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for ap in datatograph reversed %}
-                <tr>
-                  <th scope="row"> {{ ap.create_time|date:"M d, H:i"}}  </th>
-                  <td> {{ ap.active_proxy }} </td>
-                </tr>
-                {% endfor %}
-
-              </tbody>
-        </table>
-
+        <div class="col-12">
+            <b> Динамика использования прокси адресов в единицу времени </b>
+        </div>
     </div>
-    <script>
-    $(".log-row").on('mouseover',   function(e){
-        var uid = $(this).data('log-uid');
+    <div class="row">
 
-        $(`.log-row`).removeClass('highlight-row');
-        $(`.log-row[data-log-uid=${uid}]`).addClass('highlight-row');
-
-    })
-    </script>
+        <img src="data:image/png;base64,{{data}}" alt="" height="100%" ,width="100%">
+    </div>
 {% endblock %}

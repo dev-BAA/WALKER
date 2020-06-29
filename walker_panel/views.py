@@ -15,6 +15,7 @@ from django.utils import timezone
 import urllib, base64, io
 import numpy as np
 import matplotlib.pyplot as plt
+from io import StringIO
 
 from walker_panel.forms import *
 from walker_panel.models import *
@@ -183,18 +184,30 @@ def ap(request: WSGIRequest):
     for a in datatograph:
         aplist = aplist + [a.active_proxy]
         dates = dates + [a.create_time]
-    plt.plot(dates, aplist)
-    #plt.show()
+
+    #plt.plot(dates, aplist)
+    """"""
+    fig = plt.figure(figsize=(18,5))
+    ax = fig.add_subplot(111)
+    ax.plot(dates, aplist)
+    ax.set_ylim([0, 30])
+    #ax.set_title('Динамика использования прокси адресов в единицу времени')
+    #ax.title.set_size(10)
+    ax.set_xlabel('Временная шкала')
+    ax.set_ylabel('Прокси адреса')
+    plt.tight_layout()
+
+    """"""
     plt.savefig('./screenshots/graph.png')
-    plt.close()
+    #plt.close()
 
-    #imgdata = StringIO()
-    #fig.savefig(imgdata, format='svg')
-    #imgdata.seek(0)
+    imgdata = io.BytesIO()
+    plt.savefig(imgdata, format='png')
+    imgdata.seek(0)
+    string = base64.b64encode(imgdata.read())
+    uri = urllib.parse.quote(string)
+    return render(request, 'walker_panel/active_proxy.html', {'data':uri, 'is_walker_enable': is_service_running('walker')})
 
-    #data = imgdata.getvalue()
-    #return data
-    return render(request, 'walker_panel/active_proxy.html', {'datatograph': datatograph, 'is_walker_enable': is_service_running('walker')})
 
 @login_required(login_url='/sign-in/')
 def settings(request: WSGIRequest):
