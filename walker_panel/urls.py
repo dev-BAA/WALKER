@@ -22,6 +22,7 @@ urlpatterns = [
     re_path(r'^logs/$', views.logs, name='logs'),
     re_path(r'^historys/$', views.historys, name='historys'),
     re_path(r'^errors/$', views.errors, name='errors'),
+    re_path(r'^ap/$', views.ap, name='ap'),
     re_path(r'^results/$', views.results, name='results'),
     re_path(r'^proxy/$', views.proxy, name='proxy'),
     re_path(r'^proxy1/$', views.proxy1, name='proxy1'),

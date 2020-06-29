@@ -380,7 +380,7 @@ class TaskRunner(Thread):
                             log_stalk(f"{task_name} {prefix}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                             if "нашлось" in driver.title:
                                 log_stalk(f"{task_name} {prefix} - яндекс поиск, ВКЛАДКА = {driver.title}", enable_log_stalk)
-                                continue
+                                break
                         log_stalk(f"{task_name} {prefix}, 4_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         number_competitor_visit -= 1
                         log_stalk(f"{task_name} Осталось зайти к конкурентам: {number_competitor_visit}", enable_log_stalk)

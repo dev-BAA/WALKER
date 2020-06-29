@@ -22,6 +22,8 @@ from scripts.sql_querys import *
 from scripts.common_functions import *
 from scripts.bot_getpage import *
 
+last_month = datetime.today() - timedelta(days=30)
+
 @login_required(login_url='/sign-in/')
 def groups(request: WSGIRequest):
     groups = Group.objects.filter(owner=request.user.id)
@@ -172,6 +174,27 @@ def results(request: WSGIRequest):
     results = GroupTask.objects.all().order_by('target_group')
     stngs = Setting.objects.get(id=2)
     return render(request, 'walker_panel/results.html', {'results': results, 'stngs': stngs, 'is_walker_enable': is_service_running('walker')})
+
+@login_required(login_url='/sign-in/')
+def ap(request: WSGIRequest):
+    datatograph = CountActiveProxy.objects.filter(create_time__gte=last_month)
+    aplist = []
+    dates = []
+    for a in datatograph:
+        aplist = aplist + [a.active_proxy]
+        dates = dates + [a.create_time]
+    plt.plot(dates, aplist)
+    #plt.show()
+    plt.savefig('./screenshots/graph.png')
+    plt.close()
+
+    #imgdata = StringIO()
+    #fig.savefig(imgdata, format='svg')
+    #imgdata.seek(0)
+
+    #data = imgdata.getvalue()
+    #return data
+    return render(request, 'walker_panel/active_proxy.html', {'datatograph': datatograph, 'is_walker_enable': is_service_running('walker')})
 
 @login_required(login_url='/sign-in/')
 def settings(request: WSGIRequest):
