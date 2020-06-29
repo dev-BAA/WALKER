@@ -377,9 +377,16 @@ class TaskRunner(Thread):
                         driver.switch_to.window(driver.window_handles[0])
                         for handle in driver.window_handles:
                             driver.switch_to_window(handle)
-                            log_stalk(f"{task_name} {prefix}, ВКЛАДКА = {driver.title}", enable_log_stalk)
+                            log_stalk(f"{task_name} {prefix}, _ВКЛАДКА = {driver.title}", enable_log_stalk)
+                            if driver.title == '':
+                                log_stalk(f"{task_name} {prefix} - яндекс поиск, _ВКЛАДКА = {driver.title}", enable_log_stalk)
+                                driver.close()
+                                break
+                        for handle in driver.window_handles:
+                            driver.switch_to_window(handle)
+                            log_stalk(f"{task_name} {prefix}, __ВКЛАДКА = {driver.title}", enable_log_stalk)
                             if "нашлось" in driver.title:
-                                log_stalk(f"{task_name} {prefix} - яндекс поиск, ВКЛАДКА = {driver.title}", enable_log_stalk)
+                                log_stalk(f"{task_name} {prefix} - яндекс поиск, __ВКЛАДКА = {driver.title}", enable_log_stalk)
                                 break
                         log_stalk(f"{task_name} {prefix}, 4_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
                         number_competitor_visit -= 1
