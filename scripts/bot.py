@@ -178,6 +178,8 @@ class TaskRunner(Thread):
         try:
             browser_configuration = self.generate_browser_configuration(pl, task_name, self.task.id)
             driver = get_driver(browser_configuration)
+            str2 = driver.capabilities['chrome']['chromedriverVersion'].split(' ')[0]
+            log_stalk(task_name + " ***** chromedriverVersion: " + str2 + " |", enable_log_stalk)
             thread_data.pid = str(driver.service.process.pid)
             self.task.refresh_from_db()
             log(user=self.task.owner, task=self.task, action=f'TASK_ACTIVATED', uid=self.uid, pid=thread_data.pid)
