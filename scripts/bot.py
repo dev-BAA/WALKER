@@ -380,6 +380,8 @@ class TaskRunner(Thread):
                             log_stalk(f"{task_name} {prefix}, _ВКЛАДКА = {driver.title}", enable_log_stalk)
                             if driver.title == '':
                                 log_stalk(f"{task_name} {prefix} - яндекс поиск, _ВКЛАДКА = {driver.title}", enable_log_stalk)
+                                driver.stop_client()
+                                sleep(3)
                                 driver.close()
                                 break
                         for handle in driver.window_handles:

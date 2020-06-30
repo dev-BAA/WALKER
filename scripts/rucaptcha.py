@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver import Chrome, ChromeOptions, DesiredCapabilities
 
 from walker_panel.models import *
+from scripts.sql_querys import *
 from scripts.common_functions import *
 
 base_url = 'http://rucaptcha.com'
