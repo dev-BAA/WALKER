@@ -15,6 +15,7 @@ from django.utils import timezone
 import urllib, base64, io
 import numpy as np
 import matplotlib.pyplot as plt
+#plt.style.use('fivethirtyeight')
 from io import StringIO
 
 from walker_panel.forms import *
@@ -195,6 +196,11 @@ def ap(request: WSGIRequest):
     #ax.title.set_size(10)
     ax.set_xlabel('Временная шкала')
     ax.set_ylabel('Прокси адреса')
+    ax.grid(axis = 'both')
+    #ax.set_xscale('logit')
+
+    plt.yticks(np.arange(0, 31, step=1))
+    #plt.xticks(dates)
     plt.tight_layout()
 
     """"""
