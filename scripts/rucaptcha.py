@@ -81,7 +81,8 @@ def check_result_response(res: str, task_name: str, captcha_id: str) -> str:
 def input_captcha(res_input: str, task_name: str, taskname: str, driver: Chrome, path: str):
     res_input = res_input.strip()
     log_stalk(task_name + " ВВОДИМ В КАПЧУ>" + str(res_input) + "<", enable_log_stalk)
-    captcha_input = driver.find_element_by_id('rep')
+    #captcha_input = driver.find_element_by_id('rep')
+    captcha_input = driver.find_element_by_name('rep')
     captcha_input.clear()
     captcha_input.send_keys(res_input)
     sleep(5)
