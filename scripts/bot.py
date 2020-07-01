@@ -349,6 +349,8 @@ class TaskRunner(Thread):
                         save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"1_До клика, кол-во вкладок: {str(len(driver.window_handles))}")
                         sleep(2)
                         link.click()
+                        #link.submit()
+                        #driver.get(link.get_attribute('href'))
                         sleep(5)
 
                         log_stalk(f"{task_name} {prefix}, 2_Количество вкладок = {str(len(driver.window_handles))}, ВКЛАДКА = {driver.title}", enable_log_stalk)
@@ -607,6 +609,8 @@ def run():
             for task in GroupTask.objects.filter(status=True):
                 scheduler_generate(task.launches_per_day, task.id, hour_start, hour_end)
 
+    if datetime.now().hour == 23 and datetime.now().minute == 1:
+        active_proxy(0)
     run_text = "ЗАПУСК ЗАДАЧ В ПОТОК "
     threads = {}
     while hour_start <= datetime.now().hour < hour_end:

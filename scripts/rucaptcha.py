@@ -32,7 +32,6 @@ def check_file_ext(file: str) -> Dict[bytes, str]:
     with open(file, 'rb') as f:
         raw_data = f.read()
     file_ext = imghdr.what(None, h=raw_data)
-    #Dict = [raw_data, file_ext]
     dct = dict(A1 = raw_data, A2 = file_ext)
     return dct
 
@@ -92,7 +91,6 @@ def input_captcha(res_input: str, task_name: str, taskname: str, driver: Chrome,
     driver.save_screenshot(path + taskname + " END RESULT 2 " + ".png")
 
 def free_captcha(task_name: str, where: str, driver: Chrome):
-    #commoninfo = CommonInfo.objects.all()[0]
     commoninfo = CommonInfo.objects.get(id=1)
     if not commoninfo.zero_balance:
         if 'Ой!' in driver.title:
