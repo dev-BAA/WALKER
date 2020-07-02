@@ -87,7 +87,8 @@ def input_captcha(res_input: str, task_name: str, taskname: str, driver: Chrome,
     sleep(5)
     driver.save_screenshot(path + taskname + " END RESULT 1 " + ".png")
     # captcha_input.send_keys(Keys.ENTER)
-    driver.find_element_by_class_name('form__submit').click()
+    #driver.find_element_by_class_name('form__submit').click()
+    driver.find_element_by_class_name('submit').click()
     driver.save_screenshot(path + taskname + " END RESULT 2 " + ".png")
 
 def free_captcha(task_name: str, where: str, driver: Chrome):
