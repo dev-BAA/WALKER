@@ -100,8 +100,8 @@ def input_captcha(res_input: str, task_name: str, taskname: str, driver: Chrome,
 
 def free_captcha(task_name: str, where: str, driver: Chrome):
     commoninfo = CommonInfo.objects.get(id=1)
-    if not commoninfo.zero_balance:
-        if 'Ой!' in driver.title:
+    if 'Ой!' in driver.title:
+        if not commoninfo.zero_balance:
             i = 0
             while 'Ой!' in driver.title:
                 i += 1
@@ -175,10 +175,8 @@ def free_captcha(task_name: str, where: str, driver: Chrome):
                 sleep(15)
             ci_task_capched()
             log_stalk(task_name + " КАПЧЕД + 1 " + where + " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + str(i) + "_Разрешена КАПЧА", enable_log_stalk)
-        #else:
-        #    ci_task_capched()
-    else:
-        log_stalk(task_name + " На вашем счету недостаточно средств. rucaptcha.com ", enable_log_stalk)
-        #send_email(email_admin, "RUCAPCHA", email_titel, f" На вашем счету недостаточно средств. rucaptcha.com ")
-        send_email(email_dev, "RUCAPCHA", email_titel, f" На вашем счету недостаточно средств. rucaptcha.com ")
+        else:
+            log_stalk(task_name + " На вашем счету недостаточно средств. rucaptcha.com ", enable_log_stalk)
+            send_email(email_admin, "RUCAPCHA", email_titel, f" На вашем счету недостаточно средств. rucaptcha.com ")
+            send_email(email_dev, "RUCAPCHA", email_titel, f" На вашем счету недостаточно средств. rucaptcha.com ")
 
