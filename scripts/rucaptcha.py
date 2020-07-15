@@ -26,6 +26,11 @@ enable_log_run = stngs.enable_log_run
 enable_log_stalk = stngs.enable_log_stalk
 enable_log_proxy = stngs.enable_log_proxy
 
+if check_dev():
+    email_titel = 'Site Walker DEV'
+else:
+    email_titel = 'Site Walker'
+
 def save_png(path: str, name: str, url: str):
     file = path + name + ".png"
     urllib.request.urlretrieve(url, file)
