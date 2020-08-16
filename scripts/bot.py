@@ -544,10 +544,11 @@ def get_driver(config: Dict) -> Chrome:
     options.add_argument("--no-sandbox")
     options.add_argument(f"user-agent={config['user-agent']}")
     options.add_argument("--headless")
-    options.add_argument("--log-level=2")
+    #options.add_argument("--log-level=2")
     if config.get('proxy'):
         options.add_argument(f'--proxy-server={config["proxy"]}')
-    return Chrome("./webdriver/chromedriver", options=options, desired_capabilities=capabilities, service_args=["--verbose", "--log-path=/var/log/selenium/chromedriver.log"])
+    #return Chrome("./webdriver/chromedriver", options=options, desired_capabilities=capabilities, service_args=["--verbose", "--log-path=/var/log/selenium/chromedriver.log", "--log-level=ALL", "--append-log", "--readable-timestamp"])
+    return Chrome("./webdriver/chromedriver", options=options, desired_capabilities=capabilities, service_args=["--verbose", "--log-path=/var/log/selenium/chromedriver.log", "--append-log", "--readable-timestamp"])
 
 def thread_enum(where: str):
     log_run(where + line_short, enable_log_stalk)
