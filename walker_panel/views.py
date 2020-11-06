@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.handlers.wsgi import WSGIRequest
 from django.utils import timezone
 
@@ -28,11 +29,17 @@ last_month = datetime.today() - timedelta(days=30)
 
 @login_required(login_url='/sign-in/')
 def groups(request: WSGIRequest):
-    groups = Group.objects.filter(owner=request.user.id)
     commoninfo = CommonInfo.objects.get(pk=1)
-    gtasks = GroupTask.objects.all().count()
-    return render(request, 'walker_panel/groups.html',
-                  {'groups': groups, 'gtasks': gtasks, 'commoninfo': commoninfo, 'is_walker_enable': is_service_running('walker')})
+    if request.user.is_superuser:
+        groups = Group.objects.all()
+        gtasks = GroupTask.objects.all().count()
+        return render(request, 'walker_panel/groups.html',
+                      {'groups': groups, 'gtasks': gtasks, 'commoninfo': commoninfo, 'is_walker_enable': is_service_running('walker')})
+    else:
+        groups = Group.objects.filter(owner=request.user.id)
+        gtasks = GroupTask.objects.all().count()
+        return render(request, 'walker_panel/groups.html',
+                      {'groups': groups, 'gtasks': gtasks, 'commoninfo': commoninfo, 'is_walker_enable': is_service_running('walker')})
 
 @login_required(login_url='/sign-in/')
 def group_page(request: WSGIRequest, group_id: Optional[int] = None):
@@ -162,16 +169,19 @@ def logs(request: WSGIRequest):
     return render(request, 'walker_panel/logs.html', {'logs': logs, 'is_walker_enable': is_service_running('walker')})
 
 @login_required(login_url='/sign-in/')
+@staff_member_required
 def historys(request: WSGIRequest):
     historys = CommonInfoHistory.objects.all()
     return render(request, 'walker_panel/historys.html', {'historys': historys, 'is_walker_enable': is_service_running('walker')})
 
 @login_required(login_url='/sign-in/')
+@staff_member_required
 def errors(request: WSGIRequest):
     errors = Errors.objects.all()
     return render(request, 'walker_panel/errors.html', {'errors': errors, 'is_walker_enable': is_service_running('walker')})
 
 @login_required(login_url='/sign-in/')
+@staff_member_required
 def results(request: WSGIRequest):
     results = GroupTask.objects.all().order_by('target_group')
     stngs = Setting.objects.get(id=2)
@@ -216,6 +226,7 @@ def ap(request: WSGIRequest):
 
 
 @login_required(login_url='/sign-in/')
+@staff_member_required
 def settings(request: WSGIRequest):
     if request.method == 'POST':
         form = SettingForm(request.POST)

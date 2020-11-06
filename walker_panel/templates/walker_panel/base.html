@@ -28,13 +28,17 @@
         {% if request.user.is_authenticated %}
             <div class="menu-item"><a href="/">Главная</a></div>
             <div class="menu-item"><a href="/logs/" class="menu-item-title">Логи</a></div>
-            <div class="menu-item"><a href="/results/" class="menu-item-title">Позиции задач</a></div>
-            <div class="menu-item"><a href="/historys/" class="menu-item-title">История бота</a></div>
-            <div class="menu-item"><a href="/errors/" class="menu-item-title">Ошибки бота</a></div>
+            {% if request.user.is_superuser %}
+                <div class="menu-item"><a href="/results/" class="menu-item-title">Позиции задач</a></div>
+                <div class="menu-item"><a href="/historys/" class="menu-item-title">История бота</a></div>
+                <div class="menu-item"><a href="/errors/" class="menu-item-title">Ошибки бота</a></div>
+            {% endif %}
             <div class="menu-item"><a href="/proxy/" class="menu-item-title">Прокси</a></div>
             <div class="menu-item"><a href="/proxy1/" class="menu-item-title">Прокси активные</a></div>
             <div class="menu-item"><a href="/ap/" class="menu-item-title">Статистика</a></div>
-            <div class="menu-item"><a href="/settings/" class="menu-item-title">Настройки</a></div>
+            {% if request.user.is_superuser %}
+                <div class="menu-item"><a href="/settings/" class="menu-item-title">Настройки</a></div>
+            {% endif %}
             {#<div class="menu-item"><a href="/groups/" class="menu-item-title">Группы</a></div>#}
             {% if not is_walker_enable %}
                 <div class="menu-item"><h3 style="color: red;">Walker is disabled</h3></div>
