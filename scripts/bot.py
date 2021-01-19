@@ -577,7 +577,8 @@ def run():
             ci.reboot_reset = True
             ci.reboot_reset_time = timezone.now()
             ci.save()
-
+    #if datetime.now().hour == 0:
+    #    send_email(email_dev, "Task CRASHED", email_titel, f" Task !!!!!!!!!!!!!!!!!!!!  ")
     night_reset_text = "НОЧНОЕ СБРАСЫВАНИЕ КЭШЕЙ РАБОТЫ БОТА"
     if datetime.now().hour == 4:
         ci = CommonInfo.objects.get(id=1)
