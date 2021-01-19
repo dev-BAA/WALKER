@@ -124,8 +124,9 @@ def cih_save(email_titel: str):
     date = timezone.now() - timezone.timedelta(days=1)
     cih = CommonInfoHistory(create_time=date.date(), task_finished=ci.task_finished, task_crashed=ci.task_crashed, task_capched=ci.task_capched)
     cih.save()
+    #send
     if ci.task_crashed >= 4:
-        send_email(email_dev, "crashed", email_titel, " ci.task_crashed = " + str(ci.task_crashed))
+        send_email(email_dev, "Crashed", email_titel, " ci.task_crashed = " + str(ci.task_crashed))
 
 def ci_reboot_reset():
     ci = CommonInfo.objects.get(id=common_info_table_id)
