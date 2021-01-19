@@ -125,6 +125,7 @@ def free_captcha(task_name: str, where: str, driver: Chrome):
                     #log_stalk(task_name + " GET КАПЧА src 22 ----", enable_log_stalk)
                     #captcha_src2 = driver.find_elements_by_class_name('captcha__image').get_attribute('src')
                     #log_stalk(task_name + " GET КАПЧА src 22 - " + str(captcha_src2), enable_log_stalk)
+                    ###
 
                     #log_stalk(task_name + " GET КАПЧА src 23 ----", enable_log_stalk)
                     #captcha_src3 = driver.find_elements_by_class_name('captcha__image')
