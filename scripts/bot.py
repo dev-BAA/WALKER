@@ -404,7 +404,12 @@ class TaskRunner(Thread):
             sleep(1)
             pager = driver.find_element_by_class_name('pager')
             next_page = pager.find_elements_by_tag_name('a')[-1]
-            next_page.click()
+            try:
+                next_page.click()
+            except Exception as e:
+                log_stalk(f"{task_name} , Ошибка нажатия click ************************************************************************************************, Error = {e}", enable_log_stalk)
+                send_email(email_dev, "Task CRASHED", "Ошибка нажатия click *****************************************************************", f"{task_name} \n Task CRASHED \n {thread_data.proxy} \n {tcity} \n {e} ")
+                driver.execute_script("arguments[0].click();", next_page)
             sleep(3)
             log(user=self.task.owner, task=self.task, action=f'NEXT_PAGE', extra={'current_page': current_page}, uid=self.uid, pid=thread_data.pid)
         if not_done_flag:
