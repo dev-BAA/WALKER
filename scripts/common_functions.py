@@ -75,7 +75,7 @@ def save_screenshots(path: str, name: str, where: str, driver: Chrome):
     driver.save_screenshot(path + name + where + ".png")
 
 def save_screenlog(driver: Chrome, path: str, name: str, where: str):
-    _string = name + where
+    _string = name + where[:50]
     with open(path + _string + ".html", 'w') as f:
         f.write(driver.page_source)
     driver.save_screenshot(path + _string + ".png")
