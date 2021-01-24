@@ -348,7 +348,8 @@ class TaskRunner(Thread):
                         log_stalk(f"{task_name} {prefix}, 1_Перечисление вкладок = {handle_enumeration(driver)}", enable_log_stalk)
                         save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"1_До клика, кол-во вкладок: {str(len(driver.window_handles))}")
                         sleep(2)
-                        link.click()
+                        ###link.click()
+                        self.double_click(task_name, link, driver)
                         #link.submit()
                         #driver.get(link.get_attribute('href'))
                         sleep(5)
@@ -404,12 +405,16 @@ class TaskRunner(Thread):
             sleep(1)
             pager = driver.find_element_by_class_name('pager')
             next_page = pager.find_elements_by_tag_name('a')[-1]
+            self.double_click(task_name, next_page, driver)
+            """
             try:
                 next_page.click()
             except Exception as e:
                 log_stalk(f"{task_name} , Ошибка нажатия click ************************************************************************************************, Error = {e}", enable_log_stalk)
+                log_stalk(f"{task_name} , ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^, type(next_page) = {type(next_page)}", enable_log_stalk)
                 send_email(email_dev, "Task CRASHED", "Ошибка нажатия click *****************************************************************", f"{task_name} \n Task CRASHED \n {thread_data.proxy} \n {tcity} \n {e} ")
                 driver.execute_script("arguments[0].click();", next_page)
+            """
             sleep(3)
             log(user=self.task.owner, task=self.task, action=f'NEXT_PAGE', extra={'current_page': current_page}, uid=self.uid, pid=thread_data.pid)
         if not_done_flag:
@@ -457,7 +462,7 @@ class TaskRunner(Thread):
         thread_data.change_region = "-"
         #free_captcha(task_name, 'СМЕНА РЕГИОНА: перед GEOLINK click', driver)
         sleep(3)
-        self.click(task_name, "СМЕНА РЕГИОНА CLICK: ПОСЛЕ НАЖАТИЯ на GEOLINK", "class", "geolink", "Местоположение", driver)
+        self.ai_click(task_name, "СМЕНА РЕГИОНА CLICK: ПОСЛЕ НАЖАТИЯ на GEOLINK", "class", "geolink", "Местоположение", driver)
         sleep(7)
         #free_captcha(task_name, 'СМЕНА РЕГИОНА: после click geolink', driver)
         save_screenlog(driver, SCREENSHOTS_DIR_today, task_name, f"СМЕНА РЕГИОНА: ПОСЛЕ НАЖАТИЯ на GEOLINK")
@@ -499,7 +504,7 @@ class TaskRunner(Thread):
             i += 1
             sleep(3)
 
-    def click(self, task_name: str, where: str, by_type: str, by_identifier: str, need_title: str, driver: Chrome):
+    def ai_click(self, task_name: str, where: str, by_type: str, by_identifier: str, need_title: str, driver: Chrome):
         i = 0
         log_stalk(f"{task_name}{where} текущая страница {i} - {driver.title}", enable_log_stalk)
         while not need_title in driver.title:
@@ -525,6 +530,15 @@ class TaskRunner(Thread):
             i += 1
             driver.refresh()
             sleep(8)
+
+    def double_click(self, task_name: str, instance: object, driver: Chrome):
+        try:
+            instance.click()
+        except Exception as e:
+            log_stalk(f"{task_name} , Ошибка нажатия click ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^, Error = {e}", enable_log_stalk)
+            log_stalk(f"{task_name} , ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^, type(next_page) = {type(instance)}", enable_log_stalk)
+            #send_email(email_dev, "Task CRASHED", email_titel, f"{task_name} \n Task CRASHED \n {thread_data.proxy} \n {tcity} \n {e} ")
+            driver.execute_script("arguments[0].click();", instance)
 
     def change_handle(self, driver: Chrome, task_name: str, needed_title: str):
         for handle in driver.window_handles:

@@ -115,11 +115,11 @@ def get_prestart_delay() -> int:
         return randint(10*60, 35*60)
 
 def send_email(email_to, sbjct: str, frm: str, mesage: str):
-    log_stalk("::::::::::::::::::::::::::::::::::::::::::::::::::::::::", enable_log)
-    log_stalk("---sbjct=" + sbjct + ", frm=" + frm + "---", enable_log)
-    log_stalk("---smtp_server=" + smtp_server + ", smtp_sever_port=" + str(smtp_sever_port) + "---", enable_log)
-    log_stalk("---sender_mail=" + sender_mail + ", sender_password_mail=" + str(sender_password_mail) + "---", enable_log)
-    log_stalk("::::::::::::::::::::::::::::::::::::::::::::::::::::::::", enable_log)
+    #log_stalk("::::::::::::::::::::::::::::::::::::::::::::::::::::::::", enable_log)
+    #log_stalk("---sbjct=" + sbjct + ", frm=" + frm + "---", enable_log)
+    #log_stalk("---smtp_server=" + smtp_server + ", smtp_sever_port=" + str(smtp_sever_port) + "---", enable_log)
+    #log_stalk("---sender_mail=" + sender_mail + ", sender_password_mail=" + str(sender_password_mail) + "---", enable_log)
+    #log_stalk("::::::::::::::::::::::::::::::::::::::::::::::::::::::::", enable_log)
     mail_lib = smtplib.SMTP_SSL(smtp_server, smtp_sever_port)
     mail_lib.login(sender_mail, sender_password_mail)
     msg = MIMEText(mesage.encode('utf-8'), _charset='utf-8')
