@@ -123,6 +123,13 @@ class GroupTask(models.Model):
     def __str__(self):
         return self.target_group.group_name
 
+    def get_position_difference(self):
+        return str(abs(int(self.position_yesterday) - int(self.position)))
+
+    def get_sign_position_difference(self):
+        difference = str(int(self.position_yesterday) - int(self.position))
+        return difference.isdigit()
+
 class GroupLog(models.Model):
     owner = models.ForeignKey(User, on_delete=CASCADE)
     action = models.TextField(null=True)

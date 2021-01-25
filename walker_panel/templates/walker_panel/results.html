@@ -19,7 +19,15 @@
                 <tr>
                   <th scope="row"> Задача {{ result.id }} </th>
                   <td> {{ result.search_query }} </td>
-                  <td> {{ result.position }} </td>
+                  {% if result.position and result.position_yesterday %}
+                      {% if result.get_sign_position_difference %}
+                        <td class="table-success"> {{ result.position }} ( &#9650; {{ result.get_position_difference }} ) </td>
+                      {% else %}
+                        <td class="table-danger"> {{ result.position }} ( &#9660; {{ result.get_position_difference }} ) </td>
+                      {% endif %}
+                  {% else %}
+                      <td class="table-warning"> - </td>
+                  {% endif %}
                   <td> {{ result.launches_per_day }} </td>
                   <td> {{ result.running_today }} </td>
                   <td> {{ result.not_done }} </td>
