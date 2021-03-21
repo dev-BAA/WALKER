@@ -115,6 +115,15 @@ def free_captcha(task_name: str, where: str, driver: Chrome):
                 log_stalk(task_name + " ОЙ перед " + where + " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + str(i) + "_Разрешение капчи", enable_log_stalk)
 
                 save_screenshots(CAPTCHAS_DIR, taskname, " СОХРАНЯЕМ КАПЧУ на hdd", driver)
+
+                #driver.find_elements_by_class_name('CheckboxCaptcha-Label')
+                #if CheckboxCaptcha-Label
+
+                log_stalk(task_name + " TEST КАПЧА robot ----(START)", enable_log_stalk)
+                bodyText = driver.find_element_by_tag_name('body').text
+                if assertTrue('Я не робот' in bodyText):
+                    log_stalk(task_name + " TEST КАПЧА robot ----(END)", enable_log_stalk)
+
                 try:
                     log_stalk(task_name + " GET КАПЧА src 1", enable_log_stalk)
                     #captcha_src = driver.find_elements_by_class_name('form__captcha')[0].get_attribute('src')
