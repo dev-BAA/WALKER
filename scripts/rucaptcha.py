@@ -3,6 +3,7 @@ import logging
 import imghdr
 import urllib
 import requests
+import unittest
 
 from typing import Dict
 from selenium.webdriver import ActionChains
@@ -121,7 +122,7 @@ def free_captcha(task_name: str, where: str, driver: Chrome):
 
                 log_stalk(task_name + " TEST КАПЧА robot ----(START)", enable_log_stalk)
                 bodyText = driver.find_element_by_tag_name('body').text
-                if assertTrue('Я не робот' in bodyText):
+                if self.assertTrue('Я не робот' in bodyText):
                     log_stalk(task_name + " TEST КАПЧА robot ----(END)", enable_log_stalk)
 
                 try:
@@ -189,4 +190,3 @@ def free_captcha(task_name: str, where: str, driver: Chrome):
             log_stalk(task_name + " На вашем счету недостаточно средств. rucaptcha.com ", enable_log_stalk)
             send_email(email_admin, "RUCAPCHA", email_titel, f" На вашем счету недостаточно средств. rucaptcha.com ")
             send_email(email_dev, "RUCAPCHA", email_titel, f" На вашем счету недостаточно средств. rucaptcha.com ")
-
